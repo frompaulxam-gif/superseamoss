@@ -1,0 +1,24 @@
+.seamoss-hero-track{height:260svh;position:relative}
+.seamoss-hero{--hero-title-size:clamp(30px,7.7vw,112px);height:100svh;position:sticky;top:0;overflow:hidden;isolation:isolate;display:grid;grid-template-rows:auto minmax(0,1fr);padding:max(116px,13svh) 0 4svh;background:#eadbc3}
+.seamoss-hero .seamoss-hero-backdrop{position:absolute;inset:0;z-index:-1;pointer-events:none}
+.seamoss-hero .seamoss-hero-backdrop img{width:100%;height:100%;max-width:none;object-fit:cover;object-position:center}
+.seamoss-hero-titles{display:grid;padding:0 4vw;text-align:center;pointer-events:none;z-index:1}
+.seamoss-hero-intro,.seamoss-hero-origin{grid-area:1/1;align-self:start}
+.seamoss-hero-intro,.seamoss-hero-location{font-family:inherit;font-size:var(--hero-title-size);font-weight:650;line-height:1.02;letter-spacing:-.04em;margin:0;text-wrap:balance}
+.seamoss-hero-intro{color:var(--ink)}
+.seamoss-hero-intro>span{display:block}
+.seamoss-hero-intro .second-line,.seamoss-hero-location{color:#4e5a3e}
+.seamoss-hero-origin{display:flex;flex-direction:column;gap:12px}
+.seamoss-hero-source{font-size:clamp(20px,2.5vw,36px);font-weight:650;line-height:1.2;letter-spacing:-.035em;margin:0;color:var(--ink)}
+.seamoss-hero-source,.seamoss-hero-location{opacity:0}
+.seamoss-hero-art{position:relative;min-height:0;width:min(100%,780px);justify-self:center}
+.seamoss-hero-poster,.seamoss-hero-art .jar-poster,.seamoss-hero-canvas{position:absolute;inset:0;width:100%;height:100%;max-width:none;object-fit:contain;transform:none}
+.seamoss-hero-canvas{opacity:0}
+.seamoss-hero-art[data-frame-ready=true] .seamoss-hero-canvas{opacity:1}
+.seamoss-hero-art[data-frame-ready=true] .jar-poster{visibility:hidden}
+.seamoss-hero [hidden]{display:none}
+@media(max-width:768px){.seamoss-hero{padding-top:max(100px,14svh)}.seamoss-hero-origin{gap:8px}.seamoss-hero-art{width:100%;max-width:600px}}
+@media(max-height:500px) and (orientation:landscape){.seamoss-hero{padding-top:100px;padding-bottom:12px}.seamoss-hero-origin{gap:6px}.seamoss-hero-source{font-size:20px}}
+@media(prefers-reduced-motion:reduce){.seamoss-hero-track{height:100svh}.seamoss-hero-intro{display:none}.seamoss-hero-source,.seamoss-hero-location{opacity:1}}
+
+.seamoss-hero-track[data-fallback=true]{height:100svh}

@@ -1,0 +1,35 @@
+.order-blend-field select[hidden]{display:none}
+.order-blend-fields{gap:26px;grid-template-columns:minmax(0,1fr)}
+.order-blend-field{min-width:0}
+.blend-picker{min-width:0;container:blend-options / inline-size}
+.blend-picker-header{display:flex;gap:12px;align-items:center;justify-content:space-between;margin:-4px 0 12px;min-height:44px}
+.blend-picker-selected{font-size:13px;line-height:1.5;margin:0;min-width:0;color:#59624f}
+.blend-picker-selected strong{font-weight:550;color:var(--ink)}
+.blend-picker-track{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;padding:4px 4px 10px;min-width:0}
+.blend-picker-choice{appearance:none;min-width:0;padding:0;border:0;background:transparent;font-family:inherit;color:var(--ink);cursor:pointer;text-align:center}
+.blend-picker-frame{position:relative;display:block;aspect-ratio:1/1;border:2px solid transparent;border-radius:16px;padding:8px;background:#e9e4d957;transition:border-color 150ms ease-out,background-color 150ms ease-out}
+.blend-picker-photo{display:block;width:100%;height:100%;background-image:var(--jar-image);background-size:contain;background-position:center;background-repeat:no-repeat;filter:drop-shadow(0 4px 4px #3026181c);transition:transform 160ms ease-out}
+.blend-picker-tick{position:absolute;top:5px;right:5px;display:flex;align-items:center;justify-content:center;width:19px;height:19px;border-radius:50%;background:#4e5a3e;color:#fffdf8;font-size:11px;font-weight:600;opacity:0}
+.blend-picker-choice[aria-checked=true] .blend-picker-frame{border-color:#4e5a3e;background:#e1e6d875}
+.blend-picker-choice[aria-checked=true] .blend-picker-tick{opacity:1}
+.blend-picker-choice[aria-checked=true] .blend-picker-name{font-weight:650}
+.blend-picker-name{display:block;font-size:12px;font-weight:450;line-height:1.4;padding:9px 3px 2px;min-height:45px;text-wrap:balance}
+.blend-picker-hint{font-size:10px;line-height:1.5;color:#626a59;margin:7px 0 0}
+.blend-picker-choice:focus-visible{outline:none}
+.blend-picker-choice:focus-visible .blend-picker-frame{outline:3px solid #4e5a3e;outline-offset:3px}
+.blend-picker-choice:active .blend-picker-photo{transform:scale(.97)}
+@media(hover:hover) and (pointer:fine){.blend-picker-choice:hover .blend-picker-photo{transform:translateY(-2px)}}
+@media(max-width:700px){.blend-picker-track{gap:10px}.blend-picker-selected{font-size:12px}.blend-picker-name{font-size:11px}.blend-picker-frame{padding:6px}.blend-picker-header{gap:8px}}
+@media(prefers-reduced-motion:reduce){.blend-picker-frame,.blend-picker-photo{transition:none}}
+.paused .blend-picker-arrow,.paused .blend-picker-frame,.paused .blend-picker-photo{transition:none}
+@container blend-options (min-width:460px){.blend-picker-track{grid-template-columns:repeat(5,minmax(0,1fr))}}
+
+/* Per-jar Manuka recipes share the form's native, keyboard-accessible radio style. */
+.blend-recipe{padding:16px 0 18px;margin:0 0 16px;border-bottom:1px solid var(--line)}
+.blend-recipe[hidden]{display:none}
+.blend-recipe legend{font-size:13px;margin-bottom:10px}
+.blend-recipe .order-choice-row label{margin:0}
+.blend-recipe .order-choice-row label>span{font-size:13px;min-height:66px}
+.blend-recipe .order-choice-row small{font-size:11px;line-height:1.45}
+.blend-recipe-description{font-size:12px;line-height:1.6;color:var(--muted);margin:12px 0 0}
+@media(prefers-reduced-motion:reduce){.blend-recipe .order-choice-row label>span{transition:none}}
