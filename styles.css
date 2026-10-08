@@ -323,3 +323,21 @@ h1,h2,h3{text-wrap:balance}p{text-wrap:pretty}
 .order-choice-row label[hidden],.order-purchase[hidden]{display:none}
 .order-taster-note{padding:14px;border:1px solid #a12622;color:#a12622;background:#fff0ed;font-size:14px;line-height:1.5}
 .order-taster-note[hidden]{display:none}
+
+/* Align the photographed jars without changing or stretching the source images.
+   Coordinates mark each jar's centre in its original 1536 × 1024 scene. */
+#panel-manuka-glow{--jar-x:63.5%;--jar-y:47%;--scene-scale:1.04}
+#panel-king-strength{--jar-x:64%;--jar-y:46.5%;--scene-scale:1.14}
+#panel-power-up{--jar-x:65.8%;--jar-y:46.5%;--scene-scale:1.07}
+#panel-rich-clarification{--jar-x:62.9%;--jar-y:51.9%;--scene-scale:1.14}
+#panel-all-night-long{--jar-x:66%;--jar-y:45.9%;--scene-scale:1.14}
+#panel-gut-health-booster{--jar-x:64.7%;--jar-y:45%;--scene-scale:1.12}
+.blend-panel .blend-scene{
+  inset:auto;left:65%;top:50%;
+  width:calc(max(100%,780px) * var(--scene-scale));height:auto;
+  aspect-ratio:3/2;object-fit:contain;
+  transform:translate(calc(-1 * var(--jar-x)),calc(-1 * var(--jar-y)));
+}
+@media(max-width:600px){
+  .blend-panel .blend-scene{left:50%;width:calc(max(100%,1120px) * var(--scene-scale))}
+}
