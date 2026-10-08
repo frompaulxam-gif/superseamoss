@@ -13,7 +13,7 @@
     ],
     "note": "Contains honey. This blend is not vegan.",
     "post": "DSY2OQHCKgN",
-    "purpose": "Glow & radiance"
+    "purpose": "Glow & Radiance"
   },
   {
     "id": "king-strength",
@@ -29,7 +29,7 @@
     ],
     "note": "",
     "post": "DSY0qLLiOgy",
-    "purpose": "Energy & stamina"
+    "purpose": "Energy & Stamina"
   },
   {
     "id": "power-up",
@@ -46,7 +46,7 @@
     ],
     "note": "",
     "post": "DSYzpXpiCdF",
-    "purpose": "Energy & focus"
+    "purpose": "Energy & Focus"
   },
   {
     "id": "rich-clarification",
@@ -61,7 +61,7 @@
     ],
     "note": "The brand advises against consuming this blend during pregnancy.",
     "post": "DSTnyoviFSv",
-    "purpose": "Focus & clarity"
+    "purpose": "Focus & Clarity"
   },
   {
     "id": "all-night-long",
@@ -76,7 +76,7 @@
     ],
     "note": "The brand advises against consuming this blend during pregnancy or if you have heart problems.",
     "post": "DSTjdDvCIza",
-    "purpose": "Desire & balance"
+    "purpose": "Desire & Balance"
   },
   {
     "id": "gut-health-booster",
@@ -91,7 +91,7 @@
     ],
     "note": "",
     "post": "DSTfE02iL22",
-    "purpose": "Ginger & turmeric"
+    "purpose": "Ginger & Turmeric"
   }
 ];
   const body = document.body;
