@@ -80,8 +80,10 @@
     if (destination === null) destination = y + (y === settledY ? remainder : 0);
     else if (Math.sign(destination - y) !== Math.sign(delta)) destination = y;
     remainder = 0; settledY = null;
-    // Once the gesture reaches the hero, play to its boundary without more input.
-    destination = delta > 0 ? end : start;
+    // Finish the reveal, then carry the banner fully into view beneath the jar.
+    const banner = document.querySelector('.promise-strip');
+    const exit = banner ? banner.offsetHeight + Math.min(96, stage.clientHeight * .12) : 0;
+    destination = delta > 0 ? end + exit : start;
     if (!frame) { previous = performance.now(); writtenY = y; frame = requestAnimationFrame(advance); }
     return true;
   }
