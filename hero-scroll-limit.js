@@ -3,8 +3,8 @@
   const stage = track?.querySelector('.seamoss-hero');
   if (!stage) return;
   const reduced = matchMedia('(prefers-reduced-motion:reduce)');
-  // Base pace stays responsive, with gentle extra resistance around the final text.
-  const traverseMs = 1200;
+  // Test: a small scroll gesture plays the complete reveal, with a softer caption finish.
+  const traverseMs = 2400;
   let destination = null, frame = 0, previous = 0, writtenY = null, touch = null, remainder = 0, settledY = null;
   const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
   function finishResistance(progress) {
@@ -80,10 +80,8 @@
     if (destination === null) destination = y + (y === settledY ? remainder : 0);
     else if (Math.sign(destination - y) !== Math.sign(delta)) destination = y;
     remainder = 0; settledY = null;
-    // Keep only a small exit distance, so one enormous flick cannot skip the next section.
-    const exit = stage.clientHeight * .25;
-    const resistance = delta > 0 ? finishResistance((y - start) / distance) : 1;
-    destination = clamp(destination + delta * resistance, Math.max(0, start - exit), end + exit);
+    // Once the gesture reaches the hero, play to its boundary without more input.
+    destination = delta > 0 ? end : start;
     if (!frame) { previous = performance.now(); writtenY = y; frame = requestAnimationFrame(advance); }
     return true;
   }

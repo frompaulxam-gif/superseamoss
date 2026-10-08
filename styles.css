@@ -341,3 +341,20 @@ h1,h2,h3{text-wrap:balance}p{text-wrap:pretty}
 @media(max-width:600px){
   .blend-panel .blend-scene{left:50%;width:calc(max(100%,1120px) * var(--scene-scale))}
 }
+
+/* Wide screens and browser zoom-out: keep jars at a readable size and
+   blend the unchanged scene edges into a full-width background. */
+@media(min-width:1800px){
+  .blend-panel{background:var(--scene-backdrop,#776e60)}
+  #panel-manuka-glow{--scene-backdrop:#827360}
+  #panel-king-strength{--scene-backdrop:#736959}
+  #panel-power-up{--scene-backdrop:#655e51}
+  #panel-rich-clarification{--scene-backdrop:#7a6c5b}
+  #panel-all-night-long{--scene-backdrop:#494346}
+  #panel-gut-health-booster{--scene-backdrop:#89775f}
+  .blend-panel .blend-scene{
+    left:calc(50% + 270px);
+    width:calc(1800px * var(--scene-scale));
+    mask-image:linear-gradient(90deg,transparent,#000 14%,#000 86%,transparent);
+  }
+}
