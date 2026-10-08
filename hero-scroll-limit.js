@@ -3,8 +3,9 @@
   const stage = track?.querySelector('.seamoss-hero');
   if (!stage) return;
   const reduced = matchMedia('(prefers-reduced-motion:reduce)');
-  // Test: a small scroll gesture plays the complete reveal, with a softer caption finish.
+  // A short vertical swipe plays the complete reveal, with a softer caption finish.
   const traverseMs = 2400;
+  let viewportWidth = innerWidth;
   let destination = null, frame = 0, previous = 0, writtenY = null, touch = null, remainder = 0, settledY = null;
   const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
   function finishResistance(progress) {
@@ -19,6 +20,10 @@
     const start = scrollY + track.getBoundingClientRect().top;
     const distance = Math.max(0, track.offsetHeight - stage.clientHeight);
     return { start, end: start + distance, distance };
+  }
+  function revealEnd() {
+    const banner = document.querySelector('.promise-strip');
+    return geometry().end + (banner ? banner.offsetHeight + Math.min(96, stage.clientHeight * .12) : 0);
   }
   function enabled() {
     return !reduced.matches && !document.hidden &&
@@ -81,9 +86,7 @@
     else if (Math.sign(destination - y) !== Math.sign(delta)) destination = y;
     remainder = 0; settledY = null;
     // Finish the reveal, then carry the banner fully into view beneath the jar.
-    const banner = document.querySelector('.promise-strip');
-    const exit = banner ? banner.offsetHeight + Math.min(96, stage.clientHeight * .12) : 0;
-    destination = delta > 0 ? end + exit : start;
+    destination = delta > 0 ? revealEnd() : start;
     if (!frame) { previous = performance.now(); writtenY = y; frame = requestAnimationFrame(advance); }
     return true;
   }
@@ -96,35 +99,61 @@
     reset();
     if (event.touches.length !== 1 || !enabled() || nativeTarget(event.target)) return;
     const p = event.touches[0];
-    touch = { id: p.identifier, x: p.clientX, y: p.clientY, time: performance.now(), velocity: 0, controlled: false, vertical: false };
+    touch = { id: p.identifier, x: p.clientX, y: p.clientY, startX: p.clientX, startY: p.clientY, extremeY: p.clientY, direction: 0, controlled: false, vertical: false };
   }, { passive: true });
   addEventListener('touchmove', event => {
     if (!touch || event.touches.length !== 1) { reset(); return; }
     const p = event.touches[0];
     if (p.identifier !== touch.id) { reset(); return; }
-    const now = performance.now(), delta = touch.y - p.clientY, dx = touch.x - p.clientX;
+    const delta = touch.y - p.clientY, dx = touch.x - p.clientX;
     if (!touch.vertical) {
       if (Math.max(Math.abs(dx), Math.abs(delta)) < 6) return;
       if (Math.abs(dx) > Math.abs(delta)) { reset(); return; }
       touch.vertical = true;
     }
-    const handled = queue(delta, event);
-    touch.velocity = delta / Math.max(8, now - touch.time);
-    touch.x = p.clientX; touch.y = p.clientY; touch.time = now;
+    // Ignore tiny finger recoil when lifting off. A deliberate 12px reversal still wins.
+    let intent = delta;
+    if (touch.controlled && Math.sign(delta) !== touch.direction) {
+      if (Math.abs(p.clientY - touch.extremeY) < 12) {
+        if (event.cancelable) event.preventDefault();
+        touch.x = p.clientX; touch.y = p.clientY;
+        return;
+      }
+      intent = touch.direction * -12;
+    }
+    const handled = queue(intent, event);
+    if (handled) {
+      const direction = Math.sign(intent);
+      touch.extremeY = direction !== touch.direction ? p.clientY
+        : direction > 0 ? Math.min(touch.extremeY, p.clientY) : Math.max(touch.extremeY, p.clientY);
+      touch.direction = direction;
+    }
+    touch.x = p.clientX; touch.y = p.clientY;
     touch.controlled = touch.controlled || handled;
   }, { passive: false });
   addEventListener('touchend', event => {
     if (!touch) return;
     const gesture = touch; touch = null;
-    if (event.touches.length || !gesture.controlled || performance.now() - gesture.time > 80) return;
-    // Brief momentum preserves the feel of a flick without an unbounded scroll queue.
-    queue(clamp(gesture.velocity * 180, -stage.clientHeight, stage.clientHeight), event);
+    if (event.touches.length || gesture.controlled) return;
+    // Very quick flicks can arrive at touchend without an intermediate touchmove.
+    const p = [...event.changedTouches].find(point => point.identifier === gesture.id);
+    if (!p) return;
+    const delta = gesture.startY - p.clientY, dx = gesture.startX - p.clientX;
+    if (Math.abs(delta) >= 8 && Math.abs(delta) > Math.abs(dx)) queue(delta, event);
   }, { passive: false });
   addEventListener('touchcancel', reset, { passive: true });
   addEventListener('pointerdown', stop, { passive: true });
   addEventListener('keydown', reset, { passive: true });
   addEventListener('click', reset, { passive: true });
-  addEventListener('resize', reset, { passive: true });
+  addEventListener('resize', () => {
+    // Safari's browser bars change height during a swipe. Preserve that reveal;
+    // rotation or an actual width change still cancels it.
+    if (innerWidth !== viewportWidth) { viewportWidth = innerWidth; reset(); return; }
+    if (destination !== null) {
+      destination = destination > scrollY ? revealEnd() : geometry().start;
+      writtenY = scrollY;
+    }
+  }, { passive: true });
   addEventListener('pageshow', reset, { passive: true });
   reduced.addEventListener('change', reset);
   document.addEventListener('visibilitychange', reset);
