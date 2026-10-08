@@ -307,3 +307,19 @@ h1,h2,h3{text-wrap:balance}p{text-wrap:pretty}
 .range-card .range-price{font-size:16px;font-weight:600;margin:0 0 8px}
 .range-price span{font-size:11px;font-weight:400}
 .range-grid:has(.product-care[open]){align-items:start}
+
+.order-square .order-copy-required{color:#a12622;background:#fff0ed;border:1px solid #a12622;border-radius:8px;padding:14px 16px;font-size:15px;line-height:1.55;margin:16px 0 12px}
+.order-square .order-copy-required[data-active="true"]{color:#285638;background:#edf5ea;border-color:#42724a}
+.order-copy-required strong{font-weight:750}
+.order-square .button:disabled{opacity:.5;cursor:not-allowed;transform:none}
+
+.taster-promo{padding:24px;border:1px solid #777e6960;border-radius:12px;background:#f7f6ee;margin:28px 0}
+.taster-promo h3{font-size:25px;line-height:1.2;letter-spacing:-.025em;margin:12px 0}
+.taster-promo p{font-size:14px;line-height:1.6}
+.taster-promo .eyebrow{font-size:10px}
+.taster-promo-price{margin:18px 0}.taster-promo-price strong,.taster-promo-price span{display:block}.taster-promo-price strong{font-size:23px}.taster-promo-price span{font-size:12px;color:var(--muted)}
+.taster-promo .button{font-size:13px;padding:14px 18px;white-space:normal}
+.order-choice-row .taster-size{grid-column:1/-1}
+.order-choice-row label[hidden],.order-purchase[hidden]{display:none}
+.order-taster-note{padding:14px;border:1px solid #a12622;color:#a12622;background:#fff0ed;font-size:14px;line-height:1.5}
+.order-taster-note[hidden]{display:none}

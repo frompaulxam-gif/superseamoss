@@ -3,12 +3,12 @@
   {
     "id": "manuka-glow",
     "name": "Manuka Glow",
-    "short": "Manuka honey, lemon, maca & ginseng.",
+    "short": "Manuka Honey, Lemon, Maca & Ginseng.",
     "description": "Created with glow & radiance in mind. A Seamoss blend with the sweetness of manuka honey, fresh lemon juice, maca root and ginseng.",
     "ingredients": [
-      "Manuka honey",
-      "Fresh lemon juice",
-      "Maca root",
+      "Manuka Honey",
+      "Fresh Lemon Juice",
+      "Maca Root",
       "Ginseng"
     ],
     "note": "Contains honey. This blend is not vegan.",
@@ -18,13 +18,13 @@
   {
     "id": "king-strength",
     "name": "King Strength",
-    "short": "Mango, shilajit, reishi & tongkat ali.",
+    "short": "Mango, Shilajit, Reishi & Tongkat Ali.",
     "description": "Created with energy & stamina in mind. Seamoss and mango meet shilajit, reishi and tongkat ali in King Strength.",
     "ingredients": [
       "Seamoss",
       "Shilajit",
       "Reishi",
-      "Tongkat ali",
+      "Tongkat Ali",
       "Mango"
     ],
     "note": "",
@@ -34,15 +34,15 @@
   {
     "id": "power-up",
     "name": "Power Up",
-    "short": "Goji berry, beetroot, ginseng & lion’s mane.",
+    "short": "Goji Berry, Beetroot, Ginseng & Lion’s Mane.",
     "description": "Created with energy & focus in mind. A Seamoss blend bringing together goji berry, ginseng, beetroot, cinnamon and lion’s mane.",
     "ingredients": [
       "Seamoss",
-      "Goji berry",
+      "Goji Berry",
       "Ginseng",
       "Beetroot",
       "Cinnamon",
-      "Lion’s mane"
+      "Lion’s Mane"
     ],
     "note": "",
     "post": "DSYzpXpiCdF",
@@ -51,13 +51,13 @@
   {
     "id": "rich-clarification",
     "name": "Rich Clarification",
-    "short": "Dates, cinnamon, lion’s mane & black maca.",
+    "short": "Dates, Cinnamon, Lion’s Mane & Black Maca.",
     "description": "Created with focus & clarity in mind. Dates and cinnamon sit alongside lion’s mane and black maca in this Seamoss blend.",
     "ingredients": [
       "Dates",
       "Cinnamon",
-      "Lion’s mane",
-      "Black maca"
+      "Lion’s Mane",
+      "Black Maca"
     ],
     "note": "The brand advises against consuming this blend during pregnancy.",
     "post": "DSTnyoviFSv",
@@ -66,7 +66,7 @@
   {
     "id": "all-night-long",
     "name": "All Night Long",
-    "short": "Mondia, damiana, ginseng & vanilla.",
+    "short": "Mondia, Damiana, Ginseng & Vanilla.",
     "description": "Created with desire & balance in mind. A Seamoss blend of mondia, damiana, ginseng and vanilla.",
     "ingredients": [
       "Mondia",
@@ -81,12 +81,12 @@
   {
     "id": "gut-health-booster",
     "name": "Golden Ginger",
-    "short": "Ginger stem, black ginger, black maca & turmeric.",
+    "short": "Ginger Stem, Black Ginger, Black Maca & Turmeric.",
     "description": "Golden Ginger brings together ginger stem, black maca, black ginger and turmeric in a Seamoss blend.",
     "ingredients": [
-      "Ginger stem",
-      "Black maca",
-      "Black ginger",
+      "Ginger Stem",
+      "Black Maca",
+      "Black Ginger",
       "Turmeric"
     ],
     "note": "",

@@ -1,5 +1,6 @@
-import { blends, ingredients } from './blend-preview-data.mjs?v=water-colours1';
-import { selectedBlend } from './blend-recipes.mjs?v=expecting-mother-edition1';
+import { createIngredientGuide } from './ingredient-guide.mjs?v=1';
+import { blends, ingredients } from './blend-preview-data.mjs?v=ingredient-capitals1';
+import { selectedBlend } from './blend-recipes.mjs?v=ingredient-capitals1';
 
 export function createBlendPreview(form, selects) {
   const root = document.querySelector('.blend-preview');
@@ -10,6 +11,12 @@ export function createBlendPreview(form, selects) {
   const name = root.querySelector('.blend-preview-name');
   const details = root.querySelector('.blend-preview-details');
   const tabs = root.querySelector('.blend-preview-tabs');
+  const guide = createIngredientGuide(ingredients, blends);
+  const hint = root.querySelector('.blend-preview-hint');
+  hint.addEventListener('click', () => {
+    const blend = selectedBlend(selects[active]);
+    if (blend) guide.open('sea-moss', blend);
+  });
   const media = matchMedia('(prefers-reduced-motion: reduce)');
   const mobile = matchMedia('(max-width: 700px)');
   const home = document.createComment('Product preview on desktop');
@@ -63,7 +70,8 @@ export function createBlendPreview(form, selects) {
       button.type = 'button';
       button.className = 'blend-ingredient';
       button.dataset.ingredient = id;
-      button.setAttribute('aria-label', ingredient.name);
+      button.setAttribute('aria-label', 'Learn about ' + ingredient.name);
+      button.setAttribute('aria-haspopup', 'dialog');
       button.setAttribute('aria-describedby', 'blend-preview-hint');
       const photo = document.createElement('span');
       photo.className = 'blend-ingredient-photo';
@@ -79,7 +87,11 @@ export function createBlendPreview(form, selects) {
       button.addEventListener('pointerleave', event => { if (event.pointerType === 'mouse') button.classList.remove('is-named'); });
       button.addEventListener('focus', show);
       button.addEventListener('blur', () => button.classList.remove('is-named'));
-      button.addEventListener('click', () => { closeNames(); button.classList.add('is-named'); });
+      button.addEventListener('click', () => {
+        if (root.classList.contains('is-switching')) return;
+        closeNames();
+        guide.open(id, blend);
+      });
       button.append(photo, label);
       anchor.append(button);
       layer.append(anchor);
@@ -103,6 +115,7 @@ export function createBlendPreview(form, selects) {
   async function show(blend) {
     const key = blend?.key || blend?.id;
     if (!blend || (current === key && !root.classList.contains('is-switching'))) return;
+    guide.close();
     const ticket = ++revision;
     cancel();
     root.classList.remove('is-switching');

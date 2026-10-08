@@ -9,7 +9,7 @@ export const ingredients = [
   },
   {
     "id": "key-lime",
-    "name": "Key lime"
+    "name": "Key Lime"
   },
   {
     "id": "haritaki",
@@ -33,7 +33,7 @@ export const ingredients = [
   },
   {
     "id": "manuka-honey",
-    "name": "Manuka honey"
+    "name": "Manuka Honey"
   },
   {
     "id": "lemon",
@@ -41,11 +41,11 @@ export const ingredients = [
   },
   {
     "id": "maca",
-    "name": "Maca root"
+    "name": "Maca Root"
   },
   {
     "id": "ginseng",
-    "name": "Panax ginseng"
+    "name": "Panax Ginseng"
   },
   {
     "id": "shilajit",
@@ -53,7 +53,7 @@ export const ingredients = [
   },
   {
     "id": "tongkat-ali",
-    "name": "Tongkat ali"
+    "name": "Tongkat Ali"
   },
   {
     "id": "mango",
@@ -73,7 +73,7 @@ export const ingredients = [
   },
   {
     "id": "red-cherry",
-    "name": "Red cherry"
+    "name": "Red Cherry"
   },
   {
     "id": "tamarind",
@@ -89,7 +89,7 @@ export const ingredients = [
   },
   {
     "id": "goji-berry",
-    "name": "Goji berry"
+    "name": "Goji Berry"
   },
   {
     "id": "beetroot",
@@ -97,27 +97,27 @@ export const ingredients = [
   },
   {
     "id": "lions-mane",
-    "name": "Lion’s mane"
+    "name": "Lion’s Mane"
   },
   {
     "id": "date-syrup",
-    "name": "Date syrup"
+    "name": "Date Syrup"
   },
   {
     "id": "black-maca",
-    "name": "Black maca"
+    "name": "Black Maca"
   },
   {
     "id": "ginger-stem",
-    "name": "Ginger stem"
+    "name": "Ginger Stem"
   },
   {
     "id": "black-pepper",
-    "name": "Black pepper"
+    "name": "Black Pepper"
   },
   {
     "id": "black-ginger",
-    "name": "Black ginger"
+    "name": "Black Ginger"
   },
   {
     "id": "turmeric",
@@ -129,7 +129,7 @@ export const ingredients = [
   },
   {
     "id": "camu-camu",
-    "name": "Camu camu"
+    "name": "Camu Camu"
   },
   {
     "id": "shatavari",
@@ -157,7 +157,7 @@ export const ingredients = [
   },
   {
     "id": "nettle",
-    "name": "Nettle leaf"
+    "name": "Nettle Leaf"
   },
   {
     "id": "soursop",
@@ -165,7 +165,7 @@ export const ingredients = [
   },
   {
     "id": "black-seed-honey",
-    "name": "Black seed honey"
+    "name": "Black Seed Honey"
   }
 ];
 

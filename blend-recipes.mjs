@@ -1,4 +1,4 @@
-import { blends } from './blend-preview-data.mjs?v=water-colours1';
+import { blends } from './blend-preview-data.mjs?v=ingredient-capitals1';
 
 export const manukaRecipes = [
   {
@@ -6,14 +6,14 @@ export const manukaRecipes = [
     label: 'Original',
     hint: 'With maca & ginseng',
     ingredients: ['manuka-honey', 'lemon', 'maca', 'ginseng'],
-    description: 'Seamoss · Manuka honey · Lemon · Maca root · Panax ginseng'
+    description: 'Seamoss · Manuka Honey · Lemon · Maca Root · Panax Ginseng'
   },
   {
     id: 'honey-lemon',
     label: 'Expecting Mother Edition',
     hint: 'No maca or ginseng',
     ingredients: ['manuka-honey', 'lemon'],
-    description: 'Seamoss · Manuka honey · Lemon'
+    description: 'Seamoss · Manuka Honey · Lemon'
   }
 ];
 

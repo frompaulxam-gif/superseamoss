@@ -1,4 +1,5 @@
 export const offers = Object.freeze({
+  '141ml': Object.freeze([0, 1200, 2400, 3600]),
   '330ml': Object.freeze([0, 2500, 5000, 6800, 8800]),
   '720ml': Object.freeze([0, 4500, 8500, 12000])
 });
@@ -11,6 +12,9 @@ export function deliveryForSubtotal(pence, subscription = false, method = 'shipp
 }
 
 export function priceOrder(size, quantity, subscription = false, deliveryMethod = 'shipping', blends = []) {
+  if (size === '141ml' && (quantity !== 3 || subscription)) {
+    throw new RangeError('Taster jars are available only as a one-off trio of 3.');
+  }
   const prices = offers[size];
   if (!prices || !Number.isInteger(quantity) || quantity < 1 || quantity >= prices.length) {
     throw new RangeError('Choose an available jar size and quantity.');

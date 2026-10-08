@@ -1,5 +1,5 @@
-import { blends } from './blend-preview-data.mjs?v=water-colours1';
-import { manukaRecipes, selectedBlend } from './blend-recipes.mjs?v=expecting-mother-edition1';
+import { blends } from './blend-preview-data.mjs?v=ingredient-capitals1';
+import { manukaRecipes, selectedBlend } from './blend-recipes.mjs?v=ingredient-capitals1';
 
 export function createBlendPickers(form, selects) {
   const pickers = selects.map((select, jarIndex) => {
