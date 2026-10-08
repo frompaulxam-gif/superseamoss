@@ -18,16 +18,16 @@
 <link rel="apple-touch-icon" href="assets/favicon-fish-180.png" sizes="180x180">
 <link rel="icon" href="assets/favicon-fish-32.png" type="image/png" sizes="32x32">
 <link rel="preload" href="assets/bricolage-bold.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="styles.css?v=sticky-header1">
-<link rel="stylesheet" href="hero-scroll.css?v=layered1">
+<link rel="stylesheet" href="styles.css?v=brand-intro2">
+<link rel="stylesheet" href="hero-scroll.css?v=progressive2">
 <script>
 document.documentElement.classList.add('page-loading');
 setTimeout(() => {
   document.documentElement.classList.remove('page-loading');
   document.dispatchEvent(new Event('seamoss:load-timeout'));
-}, 6500);
+}, 3000);
 </script>
-<script src="loading.js?v=mobile2" defer></script><script src="site.js?v=subtitle-capitals1" defer></script><script src="jar-scroll.js?v=layered2" defer></script><script src="hero-scroll-limit.js?v=mobile-swipe2" defer></script><script type="module" src="order-options.js?v=ingredient-capitals1"></script>
+<script src="loading.js?v=brand-intro2" defer></script><script src="site.js?v=subtitle-capitals1" defer></script><script src="jar-scroll.js?v=progressive2" defer></script><script src="hero-scroll-limit.js?v=queued-swipe2" defer></script><script type="module" src="order-options.js?v=ingredient-capitals1"></script>
 <link rel="stylesheet" href="blend-preview.css?v=ingredient-guide1">
 <link rel="stylesheet" href="blend-picker.css?v=manuka-recipes1">
 <link rel="stylesheet" href="reviews.css?v=readmore1">
@@ -39,8 +39,7 @@ setTimeout(() => {
 <!-- Client gel colour corrections preserve neutral lid pixels, highlights and black logos. -->
 <div class="page-loader" role="status" aria-label="Loading Super Seamoss">
 <div class="loader-content" aria-hidden="true">
-<div class="loader-emblem"><svg class="loader-ring" viewBox="0 0 160 160"><circle class="loader-ring-track" cx="80" cy="80" r="76"/><circle class="loader-ring-progress" cx="80" cy="80" r="76" pathLength="1"/></svg><img src="assets/logo-mark.webp" alt="" width="112" height="112" fetchpriority="high"></div>
-<p>Super Seamoss.<br><span>Daily Nourishment.</span></p>
+<div class="loader-lockup"><img class="loader-mark" src="assets/logo-mark.webp" alt="" width="72" height="72" fetchpriority="high"><div class="loader-word"><span>Super <b>Seamoss</b></span></div></div>
 </div>
 </div>
 <a class="skip-link" href="#collection">Skip to content</a>
@@ -51,9 +50,10 @@ setTimeout(() => {
 <button class="menu-button" aria-controls="main-navigation" aria-label="Open navigation" aria-expanded="false">Menu <span aria-hidden="true">+</span></button>
 </header>
 <main>
-<div class="seamoss-hero-track" id="top">
+<div class="seamoss-hero-track" id="top" data-pending="true">
 <section class="seamoss-hero" aria-labelledby="hero-heading">
 <picture class="hero-backdrop seamoss-hero-backdrop" aria-hidden="true"><img src="assets/hero-layered/champagne-stone.png" alt="" fetchpriority="high"></picture>
+<p class="hero-load-status" role="status">Preparing your jar. Scroll to explore.</p>
 <div class="seamoss-hero-titles">
 <h1 class="seamoss-hero-intro" id="hero-heading"><span>Super Seamoss.</span><span class="second-line">Daily Nourishment.</span></h1>
 <div class="seamoss-hero-origin"><h2 class="seamoss-hero-source" aria-hidden="true">Sourced organically.</h2><h2 class="seamoss-hero-location" aria-hidden="true">St Lucia and Jamaica.</h2></div>

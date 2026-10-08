@@ -33,7 +33,7 @@ copy(intro,reduced.matches?0:1-smooth(range(p,.10,.31)));copy(source,reduced.mat
 }
 
   function measure() {
-    target=reduced.matches?1:clamp(-track.getBoundingClientRect().top/Math.max(1,track.offsetHeight-stage.clientHeight));
+    target=reduced.matches?1:track.dataset.pending==='true'?0:clamp(-track.getBoundingClientRect().top/Math.max(1,track.offsetHeight-stage.clientHeight));
     if (reduced.matches) { current=target; bob=0; }
     wake();
   }
@@ -57,20 +57,23 @@ copy(intro,reduced.matches?0:1-smooth(range(p,.10,.31)));copy(source,reduced.mat
     if (failed) return;
     failed=true; track.dataset.fallback='true';
     canvas.hidden=true;
-    art.querySelector('.jar-poster').src='assets/hero-layered/open.png';
-    copy(intro,0); copy(source,1); copy(place,1);
+    // Keep the already requested poster if an asset fails; never block the page.
+    delete track.dataset.pending;
+    copy(intro,reduced.matches?0:1); copy(source,reduced.matches?1:0); copy(place,reduced.matches?1:0);
     loading?.ready();
   }
   if (!ctx) { fallback(); return; }
   addEventListener('scroll',measure,{passive:true});
   addEventListener('resize',measure);
   document.addEventListener('seamoss:ready',measure);
+  document.addEventListener('seamoss:stage-ready',measure);
   reduced.addEventListener('change',measure);
   document.addEventListener('visibilitychange',wake);
   document.addEventListener('seamoss:motion',event=>{floating=!event.detail.paused;wake();});
   if ('IntersectionObserver' in window) {
     new IntersectionObserver(entries=>{visible=entries[0].isIntersecting;wake();}).observe(track);
   }
+  const assetDeadline = setTimeout(fallback, 30000);
   let loaded=0;
   Promise.all(['gel','honey','lemon','maca','ginseng','jar','lid'].map(async name=>{
     const img=new Image(); img.decoding='async';
@@ -79,6 +82,8 @@ copy(intro,reduced.matches?0:1-smooth(range(p,.10,.31)));copy(source,reduced.mat
     assets[name]={image:img,bounds:bounds(img)};
     loading?.progress(++loaded,7);
   })).then(()=>{
+    if (failed) return;
+    clearTimeout(assetDeadline);
     ready=true; current=reduced.matches?1:target;
     draw(current,performance.now());
     art.dataset.frameReady='true'; canvas.dataset.ready='true';

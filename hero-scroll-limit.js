@@ -6,6 +6,7 @@
   // A short vertical swipe plays the complete reveal, with a softer caption finish.
   const traverseMs = 2400;
   let viewportWidth = innerWidth;
+  let earlySwipe = 0;
   let destination = null, frame = 0, previous = 0, writtenY = null, touch = null, remainder = 0, settledY = null;
   const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
   function finishResistance(progress) {
@@ -41,10 +42,27 @@
     const rest = destination - scrollY;
     stop(); remainder = rest; settledY = scrollY;
   }
-  function reset() { stop(); touch = null; }
+  function remember(delta) { earlySwipe = delta > 0 ? 1 : 0; track.dataset.queuedSwipe = String(earlySwipe); }
+  function reset() { stop(); touch = null; remember(0); }
+  function nearHero() {
+    const { start } = geometry();
+    return scrollY >= start - 2 && scrollY <= start + stage.clientHeight * .45;
+  }
+  function activateReadyHero() {
+    if (!enabled() || touch) return;
+    const atTop = Math.abs(scrollY - geometry().start) <= 2;
+    if (track.dataset.pending === 'true') {
+      // Do not insert a tall scroll track beneath someone already browsing products.
+      if (!atTop && !(earlySwipe && nearHero())) return;
+      delete track.dataset.pending;
+      document.dispatchEvent(new Event('seamoss:stage-ready'));
+    }
+    if (earlySwipe && nearHero()) { remember(0); return play(1); }
+    return false;
+  }
   function nativeTarget(node) {
     if (!(node instanceof Element)) return true;
-    if (node.closest('input,textarea,select,[contenteditable],dialog,nav')) return true;
+    if (node.closest('input,textarea,select,button,a,[contenteditable],dialog,nav')) return true;
     for (let el = node; el && el !== document.body; el = el.parentElement) {
       const style = getComputedStyle(el);
       if (/(auto|scroll)/.test(style.overflowY) && el.scrollHeight > el.clientHeight + 1) return true;
@@ -72,15 +90,12 @@
     if (Math.abs(destination - scrollY) < 1) { settle(); return; }
     frame = requestAnimationFrame(advance);
   }
-  function queue(delta, event) {
-    if (!delta || !event.cancelable) return false;
-    if (!enabled() || nativeTarget(event.target)) { stop(); return false; }
+  function play(delta) {
     const { start, end, distance } = geometry();
     if (!distance) return false;
     const y = scrollY;
     const intersects = delta > 0 ? y < end && y + delta >= start : y > start && y + delta <= end;
     if (destination === null && !intersects) return false;
-    event.preventDefault();
     // A reversal replaces outstanding momentum immediately.
     if (destination === null) destination = y + (y === settledY ? remainder : 0);
     else if (Math.sign(destination - y) !== Math.sign(delta)) destination = y;
@@ -90,6 +105,19 @@
     if (!frame) { previous = performance.now(); writtenY = y; frame = requestAnimationFrame(advance); }
     return true;
   }
+  function queue(delta, event) {
+    if (!delta || !event.cancelable) return false;
+    if (nativeTarget(event.target)) { reset(); return false; }
+    if (!enabled() || track.dataset.pending === 'true') {
+      if (!reduced.matches && !document.hidden && track.dataset.fallback !== 'true' && nearHero()) remember(delta);
+      if (activateReadyHero()) { event.preventDefault(); return true; }
+      // While assets load, allow normal page scrolling and all navigation.
+      return false;
+    }
+    if (!play(delta)) return false;
+    event.preventDefault();
+    return true;
+  }
   addEventListener('wheel', event => {
     if (event.ctrlKey || event.metaKey || event.shiftKey || Math.abs(event.deltaX) > Math.abs(event.deltaY)) { reset(); return; }
     const unit = event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? stage.clientHeight : 1;
@@ -97,7 +125,7 @@
   }, { passive: false });
   addEventListener('touchstart', event => {
     reset();
-    if (event.touches.length !== 1 || !enabled() || nativeTarget(event.target)) return;
+    if (event.touches.length !== 1 || reduced.matches || document.hidden || nativeTarget(event.target)) return;
     const p = event.touches[0];
     touch = { id: p.identifier, x: p.clientX, y: p.clientY, startX: p.clientX, startY: p.clientY, extremeY: p.clientY, direction: 0, controlled: false, vertical: false };
   }, { passive: true });
@@ -134,17 +162,28 @@
   addEventListener('touchend', event => {
     if (!touch) return;
     const gesture = touch; touch = null;
-    if (event.touches.length || gesture.controlled) return;
+    if (event.touches.length) { reset(); return; }
+    if (gesture.controlled) { activateReadyHero(); return; }
     // Very quick flicks can arrive at touchend without an intermediate touchmove.
     const p = [...event.changedTouches].find(point => point.identifier === gesture.id);
     if (!p) return;
     const delta = gesture.startY - p.clientY, dx = gesture.startX - p.clientX;
     if (Math.abs(delta) >= 8 && Math.abs(delta) > Math.abs(dx)) queue(delta, event);
+    activateReadyHero();
   }, { passive: false });
   addEventListener('touchcancel', reset, { passive: true });
   addEventListener('pointerdown', stop, { passive: true });
   addEventListener('keydown', reset, { passive: true });
-  addEventListener('click', reset, { passive: true });
+  addEventListener('click', event => {
+    if (event.target.closest?.('a,button,input,select,textarea')) reset();
+  }, { passive: true });
+  addEventListener('hashchange', reset, { passive: true });
+  addEventListener('scroll', () => {
+    if (!nearHero()) remember(0);
+    if (track.dataset.pending === 'true' && !earlySwipe) activateReadyHero();
+  }, { passive: true });
+  document.addEventListener('seamoss:hero-ready', activateReadyHero);
+  document.addEventListener('seamoss:ready', activateReadyHero);
   addEventListener('resize', () => {
     // Safari's browser bars change height during a swipe. Preserve that reveal;
     // rotation or an actual width change still cancels it.
@@ -154,7 +193,8 @@
       writtenY = scrollY;
     }
   }, { passive: true });
-  addEventListener('pageshow', reset, { passive: true });
+  addEventListener('pageshow', event => { if (event.persisted) reset(); }, { passive: true });
   reduced.addEventListener('change', reset);
   document.addEventListener('visibilitychange', reset);
+  activateReadyHero();
 })();
