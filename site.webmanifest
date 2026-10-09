@@ -1,0 +1,22 @@
+{
+  "name": "Super Seamoss",
+  "short_name": "Super Seamoss",
+  "start_url": "/",
+  "display": "browser",
+  "background_color": "#f3efe5",
+  "theme_color": "#e1e3dc",
+  "icons": [
+    {
+      "src": "/super-seamoss-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/super-seamoss-icon-180.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
