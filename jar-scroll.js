@@ -8,7 +8,10 @@
   const source = track?.querySelector('.seamoss-hero-source');
   const place = track?.querySelector('.seamoss-hero-location');
   const loading = window.seamossLoading;
-  if (!canvas || !stage || !intro || !source || !place) { loading?.ready(); return; }
+  if (!canvas || !stage || !intro || !source || !place) {
+    if(track) { delete track.dataset.pending; track.dataset.fallback='true'; }
+    loading?.ready(); return;
+  }
   const reduced = matchMedia('(prefers-reduced-motion:reduce)');
   const clamp=n=>Math.max(0,Math.min(1,n)),smooth=n=>{n=clamp(n);return n*n*(3-2*n)},ease=n=>1-(1-clamp(n))**3,range=(p,a,b)=>clamp((p-a)/(b-a)),mix=(a,b,t)=>a+(b-a)*t;
   let assets={},ready=false,target=0,current=0,previous=performance.now(),floating=true,bob=0,visible=true,failed=false,request=0;
@@ -41,7 +44,7 @@ copy(intro,reduced.matches?0:1-smooth(range(p,.10,.31)));copy(source,reduced.mat
   function tick(now) {
     request=0;
     if (!ready || failed || !visible || document.hidden) return;
-    const dt=Math.min(64,now-previous); previous=now;
+    const dt=Math.max(0,Math.min(64,now-previous)); previous=now;
     current+=(target-current)*(1-Math.exp(-dt/75));
     if(Math.abs(target-current)<.0001) current=target;
     draw(current,now);
@@ -63,38 +66,79 @@ copy(intro,reduced.matches?0:1-smooth(range(p,.10,.31)));copy(source,reduced.mat
     copy(intro,reduced.matches?0:1); copy(source,reduced.matches?1:0); copy(place,reduced.matches?1:0);
     loading?.ready();
   }
+  // Semantic visibility must not depend on successful image downloads.
+  copy(intro,reduced.matches?0:1); copy(source,reduced.matches?1:0); copy(place,reduced.matches?1:0);
   if (!ctx) { fallback(); return; }
   addEventListener('scroll',measure,{passive:true});
   addEventListener('resize',measure);
   document.addEventListener('seamoss:ready',measure);
   document.addEventListener('seamoss:stage-ready',measure);
-  reduced.addEventListener('change',measure);
+  reduced.addEventListener('change',()=>{
+    if(!ready) { copy(intro,reduced.matches?0:1); copy(source,reduced.matches?1:0); copy(place,reduced.matches?1:0); }
+    measure();
+  });
   document.addEventListener('visibilitychange',wake);
   document.addEventListener('seamoss:motion',event=>{floating=!event.detail.paused;wake();});
   if ('IntersectionObserver' in window) {
     new IntersectionObserver(entries=>{visible=entries[0].isIntersecting;wake();}).observe(track);
   }
-  const assetDeadline = setTimeout(fallback, 30000);
+  const assetDeadline = setTimeout(()=>{if(!ready)fallback();}, 30000);
+  const attempts={}, pending=new Set(), retries=new Map();
+  const retryDelays=[1000,3000,8000];
   let loaded=0;
-  async function load(name) {
-    const spec=assetSpecs[name][variant];
-    const img=new Image(); img.decoding='async';
-    img.fetchPriority=['jar','lid'].includes(name)?'high':'low';
-    img.src='assets/hero-layered/'+spec.file;
-    await img.decode();
-    assets[name]={image:img,bounds:spec.bounds};
-    loading?.progress(++loaded,7);
-    wake();
-  }
-  // The first swipe needs only the jar and lid. Ingredients never gate input.
-  Promise.all(['jar','lid'].map(load)).then(()=>{
+  function enable() {
+    if(ready || !assets.jar || !assets.lid) return;
     clearTimeout(assetDeadline);
     if(failed) { failed=false; delete track.dataset.fallback; track.dataset.pending='true'; canvas.hidden=false; }
     ready=true; current=reduced.matches?1:target;
     draw(current,performance.now());
     art.dataset.frameReady='true'; canvas.dataset.ready='true';
     loading?.ready(); measure();
-  }).catch(()=>{clearTimeout(assetDeadline);fallback();});
-  ['gel','honey','lemon','maca','ginseng'].forEach(name=>load(name).catch(()=>{}));
+  }
+  async function load(name) {
+    if(assets[name] || pending.has(name)) return;
+    pending.add(name);
+    const spec=assetSpecs[name][variant], essential=name==='jar'||name==='lid';
+    const img=new Image(); img.decoding='async'; img.fetchPriority=essential?'high':'low';
+    // The mobile jar is embedded in the document, so a lost image request
+    // cannot remove both the animation and its static fallback.
+    const embedded=essential&&variant==='mobile' ? art.querySelector('[data-hero-asset="'+name+'"]')?.getAttribute('href') : null;
+    img.src=embedded || 'assets/hero-layered/'+spec.file;
+    attempts[name]=(attempts[name]||0)+1;
+    try {
+      await img.decode();
+      assets[name]={image:img,bounds:spec.bounds};
+      loading?.progress(++loaded,7);
+      track.dataset.assetsLoaded=String(loaded);
+      enable(); wake();
+    } catch {
+      if(essential&&!ready)fallback();
+      const delay=retryDelays[attempts[name]-1];
+      if(delay!==undefined) retries.set(name,setTimeout(()=>{retries.delete(name);load(name);},delay));
+    } finally { pending.delete(name); }
+  }
+  function recover() {
+    for(const name of Object.keys(assetSpecs)) {
+      if(assets[name]||pending.has(name))continue;
+      clearTimeout(retries.get(name));retries.delete(name);attempts[name]=0;load(name);
+    }
+  }
+  addEventListener('online',recover,{passive:true});
+  // Also recover the decorative backdrop without gating the usable page.
+  const backdrop=track.querySelector('.seamoss-hero-backdrop img');
+  if(backdrop) {
+    let tries=0,timer,inFlight=false;
+    const retryBackdrop=()=>{
+      if(inFlight || backdrop.complete&&backdrop.naturalWidth)return;
+      clearTimeout(timer);
+      inFlight=true;
+      const probe=new Image();probe.decoding='async';probe.src=backdrop.getAttribute('src');
+      probe.decode().then(()=>{backdrop.src=probe.src;},()=>{if(tries<retryDelays.length)timer=setTimeout(retryBackdrop,retryDelays[tries++]);}).finally(()=>{inFlight=false;});
+    };
+    backdrop.addEventListener('error',retryBackdrop);
+    if(backdrop.complete&&!backdrop.naturalWidth)retryBackdrop();
+    addEventListener('online',()=>{tries=0;retryBackdrop();},{passive:true});
+  }
+  Object.keys(assetSpecs).forEach(load);
   measure();
 })();

@@ -129,10 +129,8 @@ h1,h2,h3{text-wrap:balance}p{text-wrap:pretty}
 
 /* A quiet brand reveal while the actual hero images and opening frames decode. */
 .page-loader{position:fixed;inset:0;z-index:150;background:#f3efe5;display:grid;place-items:center;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .15s,visibility .15s}
-.page-loading{overflow:hidden;overscroll-behavior:none}
-.page-loading body{overflow:hidden}
-.page-loading .page-loader{opacity:1;visibility:visible;pointer-events:auto;touch-action:none}
-.page-loading .site-header{opacity:0}
+.page-loading .page-loader{opacity:1;visibility:visible;pointer-events:none}
+.page-loading .site-header{z-index:151}
 .page-loading .analytics-consent{visibility:hidden}
 .loader-content{width:min(90vw,440px)}
 .loader-lockup{display:flex;align-items:center;justify-content:center;gap:14px;transform-origin:center;will-change:transform}

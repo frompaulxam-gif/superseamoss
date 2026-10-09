@@ -32,12 +32,17 @@
   }
   // The brand introduction is brief. Network readiness must never trap visitors here.
   const mark = loader.querySelector('img');
-  Promise.race([mark.decode().catch(()=>{}),new Promise(resolve=>setTimeout(resolve,250))]).then(()=>{
+  Promise.race([mark?.decode ? mark.decode().catch(()=>{}) : Promise.resolve(),new Promise(resolve=>setTimeout(resolve,250))]).then(()=>{
     root.classList.add('brand-intro-running');
     setTimeout(leave, reduced.matches ? 0 : Math.max(0, 1400 - (performance.now() - started)));
   });
   document.addEventListener('seamoss:load-timeout',finish,{once:true});
   addEventListener('pageshow',event=>{if(event.persisted)finish();});
+  // An intentional gesture dismisses the intro and reaches the usable page.
+  addEventListener('touchstart',finish,{once:true,passive:true});
+  addEventListener('wheel',finish,{once:true,passive:true});
+  addEventListener('pointerdown',finish,{once:true,passive:true});
+  addEventListener('scroll',()=>{if(scrollY>8)finish();},{passive:true});
   addEventListener('keydown',event=>{if(['Tab','Escape'].includes(event.key))finish();});
   reduced.addEventListener('change',()=>{if(reduced.matches)finish();});
   document.addEventListener('visibilitychange',()=>{if(document.hidden)finish();});

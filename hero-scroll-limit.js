@@ -7,6 +7,29 @@
   const traverseMs = 2400;
   let viewportWidth = innerWidth;
   let earlySwipe = 0;
+  let idleTimer=0, idleDue=false, idleConsumed=false;
+  function cancelIdle() {
+    clearTimeout(idleTimer); idleTimer=0; idleDue=false; idleConsumed=true;
+  }
+  function playIdle() {
+    if(!idleDue || idleConsumed) return;
+    if(reduced.matches || document.hidden || !nearHero()) { cancelIdle(); return; }
+    if(!enabled() || touch) return;
+    if(track.dataset.pending==='true') {
+      delete track.dataset.pending;
+      document.dispatchEvent(new Event('seamoss:stage-ready'));
+    }
+    idleConsumed=true; idleDue=false;
+    track.dataset.autoplay='started';
+    play(1);
+  }
+  function armIdle() {
+    if(idleTimer || idleDue || idleConsumed) return;
+    if(reduced.matches || document.hidden || scrollY>geometry().start+2 || location.hash&&location.hash!=='#top') { cancelIdle(); return; }
+    if(document.documentElement.classList.contains('page-loading')) return;
+    // One second of the visible hero is enough: no scroll gesture is required.
+    idleTimer=setTimeout(()=>{idleTimer=0;idleDue=true;playIdle();},1000);
+  }
   let destination = null, frame = 0, previous = 0, writtenY = null, touch = null, remainder = 0, settledY = null;
   const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
   function finishResistance(progress) {
@@ -91,6 +114,7 @@
     frame = requestAnimationFrame(advance);
   }
   function play(delta) {
+    cancelIdle();
     const { start, end, distance } = geometry();
     if (!distance) return false;
     const y = scrollY;
@@ -160,7 +184,7 @@
     touch.controlled = touch.controlled || handled;
   }, { passive: false });
   addEventListener('touchend', event => {
-    if (!touch) return;
+    if (!touch) { playIdle(); return; }
     const gesture = touch; touch = null;
     if (event.touches.length) { reset(); return; }
     if (gesture.controlled) { activateReadyHero(); return; }
@@ -176,20 +200,22 @@
           !reduced.matches && !document.hidden && track.dataset.fallback !== 'true') remember(delta);
     }
     activateReadyHero();
+    playIdle();
   }, { passive: false });
-  addEventListener('touchcancel', reset, { passive: true });
+  addEventListener('touchcancel', ()=>{reset();playIdle();}, { passive: true });
   addEventListener('pointerdown', stop, { passive: true });
-  addEventListener('keydown', reset, { passive: true });
+  addEventListener('keydown', ()=>{cancelIdle();reset();}, { passive: true });
   addEventListener('click', event => {
-    if (event.target.closest?.('a,button,input,select,textarea')) reset();
+    if (event.target.closest?.('a,button,input,select,textarea')) { cancelIdle(); reset(); }
   }, { passive: true });
-  addEventListener('hashchange', reset, { passive: true });
+  addEventListener('hashchange', ()=>{cancelIdle();reset();}, { passive: true });
   addEventListener('scroll', () => {
+    if(destination===null && scrollY>geometry().start+2) cancelIdle();
     if (!nearHero()) remember(0);
     if (track.dataset.pending === 'true' && !earlySwipe) activateReadyHero();
   }, { passive: true });
-  document.addEventListener('seamoss:hero-ready', activateReadyHero);
-  document.addEventListener('seamoss:ready', activateReadyHero);
+  document.addEventListener('seamoss:hero-ready', ()=>{activateReadyHero();playIdle();});
+  document.addEventListener('seamoss:ready', ()=>{activateReadyHero();armIdle();playIdle();});
   addEventListener('resize', () => {
     // Safari's browser bars change height during a swipe. Preserve that reveal;
     // rotation or an actual width change still cancels it.
@@ -199,8 +225,9 @@
       writtenY = scrollY;
     }
   }, { passive: true });
-  addEventListener('pageshow', event => { if (event.persisted) reset(); }, { passive: true });
-  reduced.addEventListener('change', reset);
-  document.addEventListener('visibilitychange', reset);
+  addEventListener('pageshow', event => { if (event.persisted) {cancelIdle();reset();} }, { passive: true });
+  reduced.addEventListener('change', ()=>{cancelIdle();reset();});
+  document.addEventListener('visibilitychange', ()=>{cancelIdle();reset();});
   activateReadyHero();
+  armIdle();
 })();
