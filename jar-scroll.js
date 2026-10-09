@@ -23,7 +23,9 @@ const variant=matchMedia("(max-width:768px)").matches?"mobile":"full";
 function image(name,x,y,w,h,rotation=0,mirror=false){const a=assets[name];if(!a)return;ctx.save();ctx.translate(x,y);ctx.rotate(rotation*Math.PI/180);if(mirror)ctx.scale(-1,1);ctx.drawImage(a.image,...a.bounds,-w/2,-h/2,w,h);ctx.restore()}
 function fit(name,width){const b=assetSpecs[name][variant].bounds;return width*b[3]/b[2]}
 function copy(el,opacity){el.style.opacity=opacity;el.setAttribute('aria-hidden',String(opacity<.01))}
-function draw(p,now){if(!ready)return;const reveal=ease(range(p,.23,.76)),lid=ease(range(p,.06,.43)),floatAmount=reduced.matches||!floating?0:smooth(range(p,.73,.84));bob=reduced.matches?0:bob+(floatAmount-bob)*.07;const clock=now/1000;
+// Preserve the approved 60Hz float easing at every display refresh rate.
+// The caller caps elapsed time and resets it after a hidden/offscreen pause.
+function draw(p,now,dt=0){if(!ready)return;const reveal=ease(range(p,.23,.76)),lid=ease(range(p,.06,.43)),floatAmount=reduced.matches||!floating?0:smooth(range(p,.73,.84));bob=reduced.matches?0:bob+(floatAmount-bob)*(1-Math.pow(.93,dt/(1000/60)));const clock=now/1000;
 ctx.clearRect(0,0,900,900);
 const jarY=560+Math.sin(clock*.85)*3*bob;
 // The ring begins inside the jar silhouette and unfolds behind it. No border masks or colour key.
@@ -49,7 +51,7 @@ revealBackdrop();
     const dt=Math.max(0,Math.min(64,now-previous)); previous=now;
     current+=(target-current)*(1-Math.exp(-dt/75));
     if(Math.abs(target-current)<.0001) current=target;
-    draw(current,now);
+    draw(current,now,dt);
     const moving=Math.abs(target-current)>.0001;
     const floatActive=!reduced.matches && floating && current>.73;
     if(moving || floatActive || bob>.0001) request=requestAnimationFrame(tick);
