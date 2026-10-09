@@ -6,7 +6,8 @@
   // A short vertical swipe plays the complete reveal, with a softer caption finish.
   const traverseMs = 2400;
   let viewportWidth = innerWidth;
-  let earlySwipe = 0;
+  let earlySwipe = 0, earlyNative = false;
+  let nativeUntil = 0, nativeQuietUntil = 0;
   let idleTimer=0, idleDue=false, idleConsumed=false;
   function cancelIdle() {
     clearTimeout(idleTimer); idleTimer=0; idleDue=false; idleConsumed=true;
@@ -59,13 +60,14 @@
   function stop() {
     cancelAnimationFrame(frame);
     frame = 0; destination = null; writtenY = null; remainder = 0; settledY = null;
+    nativeUntil = 0; nativeQuietUntil = 0;
   }
   function settle() {
     // Keep fractional input between events instead of rounding gentle gestures away.
     const rest = destination - scrollY;
     stop(); remainder = rest; settledY = scrollY;
   }
-  function remember(delta) { earlySwipe = delta > 0 ? 1 : 0; track.dataset.queuedSwipe = String(earlySwipe); }
+  function remember(delta, native = false) { earlySwipe = delta > 0 ? 1 : 0; earlyNative = !!earlySwipe && native; track.dataset.queuedSwipe = String(earlySwipe); }
   function reset() { stop(); touch = null; remember(0); }
   function nearHero() {
     const { start } = geometry();
@@ -80,7 +82,7 @@
       delete track.dataset.pending;
       document.dispatchEvent(new Event('seamoss:stage-ready'));
     }
-    if (earlySwipe && nearHero()) { remember(0); return play(1); }
+    if (earlySwipe && nearHero()) { const native = earlyNative; remember(0); return play(1, native); }
     return false;
   }
   function nativeTarget(node) {
@@ -95,8 +97,20 @@
   function advance(now) {
     frame = 0;
     if (destination === null || !enabled()) { stop(); return; }
-    // Discard queued input if a keyboard, anchor or scrollbar moved the document.
-    if (writtenY !== null && Math.abs(scrollY - writtenY) > 2) { stop(); return; }
+    // An uncaptured touch can keep scrolling after release. Allow only forward
+    // movement near the hero, with 100ms of quiet and a total 1.2s handoff limit.
+    if (nativeUntil && now >= nativeUntil) {
+      if (now < nativeQuietUntil) { stop(); return; }
+      nativeUntil = 0;
+    }
+    if (writtenY !== null && Math.abs(scrollY - writtenY) > 2) {
+      if (nativeUntil && nearHero() && scrollY > writtenY) {
+        writtenY = scrollY; nativeQuietUntil = now + 100;
+      } else { stop(); return; }
+    }
+    if (nativeUntil && now < nativeQuietUntil) {
+      previous = now; frame = requestAnimationFrame(advance); return;
+    }
     const { start, end, distance } = geometry();
     const dt = Math.min(40, Math.max(0, now - previous)); previous = now;
     const gap = destination - scrollY;
@@ -113,7 +127,7 @@
     if (Math.abs(destination - scrollY) < 1) { settle(); return; }
     frame = requestAnimationFrame(advance);
   }
-  function play(delta) {
+  function play(delta, native = false) {
     cancelIdle();
     const { start, end, distance } = geometry();
     if (!distance) return false;
@@ -126,6 +140,8 @@
     remainder = 0; settledY = null;
     // Finish the reveal, then carry the banner fully into view beneath the jar.
     destination = delta > 0 ? revealEnd() : start;
+    nativeUntil = native ? performance.now() + 1200 : 0;
+    nativeQuietUntil = native ? performance.now() + 100 : 0;
     if (!frame) { previous = performance.now(); writtenY = y; frame = requestAnimationFrame(advance); }
     return true;
   }
@@ -197,7 +213,7 @@
       // Safari may have already committed this gesture to native scrolling.
       // Honour the upward swipe after release without cancelling native movement.
       if (!captured && delta > 0 && nearHero() && !nativeTarget(event.target) &&
-          !reduced.matches && !document.hidden && track.dataset.fallback !== 'true') remember(delta);
+          !reduced.matches && !document.hidden && track.dataset.fallback !== 'true') remember(delta, true);
     }
     activateReadyHero();
     playIdle();
