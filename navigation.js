@@ -48,6 +48,6 @@
   });
   // Do not restore a locked menu when returning through Safari's page cache.
   addEventListener('pagehide',()=>close());
-  addEventListener('pageshow',()=>{if(menu.open || locked)close();});
+  addEventListener('pageshow',event=>{if(event.persisted && (menu.open || locked))close();});
   sync();
 })();
