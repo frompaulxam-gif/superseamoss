@@ -106,6 +106,9 @@
     const product=products.find(item=>item.id===button.dataset.product);
     const image=document.querySelector('#product-dialog-image');const version='?v=wet1';image.src='assets/blends/'+product.id+'-wet.webp'+version;image.srcset='assets/blends/'+product.id+'-wet-768.webp'+version+' 768w, assets/blends/'+product.id+'-wet.webp'+version+' 1536w';image.sizes='(max-width: 700px) calc(100vw - 24px), 46vw';image.alt='Creative ingredient still life for Super Seamoss '+product.name;
     document.querySelector('#product-dialog-title').textContent=product.name;
+    const buy=document.querySelector('#product-dialog-buy');
+    buy.dataset.orderBlend=product.id;
+    buy.setAttribute('aria-label','Buy '+product.name+' now');
     document.querySelector('#product-dialog-description').textContent=product.description;
     document.querySelector('#product-dialog-ingredients').replaceChildren(...product.ingredients.map(ingredient=> { const item=document.createElement('li');item.textContent=ingredient;return item; }));
     const note=document.querySelector('#product-dialog-note');note.textContent=product.note;note.hidden=!product.note;
@@ -113,7 +116,9 @@
     document.querySelector('#product-dialog-recipes').hidden = product.id !== 'manuka-glow';
     productDialog.showModal();body.classList.add('dialog-open');productDialog.scrollTop=0;
   }));
-  productDialog.querySelector('[data-order-blend]').addEventListener('click',()=>productDialog.close());
+  productDialog.querySelectorAll('[data-order-blend]').forEach(link=>link.addEventListener('click',()=>{
+    productDialog.close();body.classList.remove('dialog-open');
+  }));
   productDialog.querySelector('.close-button').addEventListener('click',()=>productDialog.close());
   productDialog.addEventListener('click',event=> { if(event.target!==productDialog)return;const rect=productDialog.getBoundingClientRect();if(event.clientX<rect.left||event.clientX>rect.right||event.clientY<rect.top||event.clientY>rect.bottom)productDialog.close(); });
   productDialog.addEventListener('close',()=>body.classList.remove('dialog-open'));

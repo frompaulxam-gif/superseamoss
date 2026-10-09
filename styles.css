@@ -375,3 +375,12 @@ html{scroll-padding-top:112px}
 @media(max-width:1000px){html{scroll-padding-top:94px}}
 @media(max-width:700px){html{scroll-padding-top:86px}}
 @media(max-width:700px) and (max-height:750px){html{scroll-padding-top:75px}}
+
+/* Each featured blend leads directly into the existing order builder. */
+.blend-actions{display:flex;align-items:center;flex-wrap:wrap;gap:12px 22px;margin-top:20px}
+.blend-actions .blend-buy{background:var(--paper);color:var(--ink);border-color:var(--paper);min-height:48px;padding:12px 22px}
+.blend-actions .blend-explore{margin:0}
+.blend-buy:focus-visible,#product-dialog-buy:focus-visible{outline:2px solid currentColor;outline-offset:5px}
+.blend-buy:active,#product-dialog-buy:active{transform:scale(.98)}
+#product-dialog-buy{margin:8px 0 0}
+@media(max-width:380px){.blend-actions{gap:8px 16px}.blend-actions .blend-buy{padding:12px 18px}}
