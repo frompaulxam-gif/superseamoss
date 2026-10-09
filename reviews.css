@@ -14,13 +14,15 @@
 .review-card blockquote p{font-size:14px;line-height:1.65;color:#59624f;margin:0;text-wrap:pretty}
 .reviews-section[data-reviews-ready=true] .reviews-window{overflow:hidden;mask-image:linear-gradient(to right,transparent,#000 3%,#000 97%,transparent)}
 .reviews-section[data-reviews-ready=true] .reviews-track{animation:review-glide 78s linear infinite}
-.reviews-section[data-reviews-visible=false] .reviews-track,.reviews-section:has(.review-title a:hover) .reviews-track,.reviews-section:has(.review-title a:focus-visible) .reviews-track,.paused .reviews-track{animation-play-state:paused}
+.reviews-section[data-reviews-visible=false] .reviews-track,.paused .reviews-track{animation-play-state:paused}
 @keyframes review-glide{to{transform:translateX(-50%)}}
 @media(max-width:700px){.reviews-section{padding:24px 0}.review-card{width:min(320px,86vw);padding:12px 16px}.reviews-group{gap:16px;padding:0 8px}.review-stars{font-size:22px}.reviews-section[data-reviews-ready=true] .reviews-window{mask-image:linear-gradient(to right,transparent,#000 2%,#000 98%,transparent)}}
 @media(prefers-reduced-motion:reduce){.reviews-section[data-reviews-ready=true] .reviews-window{overflow-x:auto;mask-image:none}.reviews-section[data-reviews-ready=true] .reviews-track{animation:none}.reviews-group[aria-hidden=true]{display:none}.reviews-group{padding:0 5vw;gap:16px}}
 .review-read-more{display:inline-flex;align-items:center;gap:12px;min-height:44px;margin-top:10px;padding:6px 2px;border:0;border-bottom:1px solid currentColor;background:transparent;color:var(--ink);font-size:14px;font-weight:600}
 .review-read-more:focus-visible{outline:2px solid #596d44;outline-offset:4px}
-.reviews-section:hover .reviews-track,.reviews-section:focus-within .reviews-track,.reviews-section[data-review-open=true] .reviews-track{animation-play-state:paused}
+.reviews-section:has(a:focus-visible,button:focus-visible,a:active,button:active) .reviews-track,.reviews-section[data-review-open=true] .reviews-track{animation-play-state:paused}
+/* Touch browsers can keep :hover after a tap. Only mouse/trackpad links pause on hover. */
+@media(hover:hover) and (pointer:fine){.reviews-section:has(a:hover,button:hover) .reviews-track{animation-play-state:paused}}
 body.review-open{overflow:hidden}
 .review-dialog{width:min(660px,calc(100% - 32px));max-height:calc(100svh - 40px);margin:auto;padding:64px 36px 32px;border:1px solid var(--line);border-radius:16px;background:var(--paper);color:var(--ink);overscroll-behavior:contain}
 .review-dialog::backdrop{background:#18201580;backdrop-filter:blur(6px)}
