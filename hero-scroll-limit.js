@@ -168,7 +168,13 @@
     const p = [...event.changedTouches].find(point => point.identifier === gesture.id);
     if (!p) return;
     const delta = gesture.startY - p.clientY, dx = gesture.startX - p.clientX;
-    if (Math.abs(delta) >= 8 && Math.abs(delta) > Math.abs(dx)) queue(delta, event);
+    if (Math.abs(delta) >= 8 && Math.abs(delta) > Math.abs(dx)) {
+      const captured = queue(delta, event);
+      // Safari may have already committed this gesture to native scrolling.
+      // Honour the upward swipe after release without cancelling native movement.
+      if (!captured && delta > 0 && nearHero() && !nativeTarget(event.target) &&
+          !reduced.matches && !document.hidden && track.dataset.fallback !== 'true') remember(delta);
+    }
     activateReadyHero();
   }, { passive: false });
   addEventListener('touchcancel', reset, { passive: true });

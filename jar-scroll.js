@@ -13,10 +13,11 @@
   const clamp=n=>Math.max(0,Math.min(1,n)),smooth=n=>{n=clamp(n);return n*n*(3-2*n)},ease=n=>1-(1-clamp(n))**3,range=(p,a,b)=>clamp((p-a)/(b-a)),mix=(a,b,t)=>a+(b-a)*t;
   let assets={},ready=false,target=0,current=0,previous=performance.now(),floating=true,bob=0,visible=true,failed=false,request=0;
   // Composition and reveal curves are retained from the approved layered prototype.
-// Read alpha bounds so each whole generated object fits its intended box, including root tips.
-function bounds(image){const c=document.createElement('canvas');c.width=image.width;c.height=image.height;const x=c.getContext('2d',{willReadFrequently:true});x.drawImage(image,0,0);const rgba=x.getImageData(0,0,c.width,c.height).data;let x0=c.width,y0=c.height,x1=0,y1=0;for(let y=0;y<c.height;y++)for(let q=0;q<c.width;q++){if(rgba[(y*c.width+q)*4+3]>10){x0=Math.min(x0,q);x1=Math.max(x1,q);y0=Math.min(y0,y);y1=Math.max(y1,y)}}return[x0,y0,x1-x0+1,y1-y0+1]}
-function image(name,x,y,w,h,rotation=0,mirror=false){const a=assets[name];ctx.save();ctx.translate(x,y);ctx.rotate(rotation*Math.PI/180);if(mirror)ctx.scale(-1,1);ctx.drawImage(a.image,...a.bounds,-w/2,-h/2,w,h);ctx.restore()}
-function fit(name,width){const b=assets[name].bounds;return width*b[3]/b[2]}
+// Precomputed crop bounds avoid seven large pixel scans on mobile startup.
+const assetSpecs={"gel":{"full":{"file":"gel.webp","size":[1254,1254],"bounds":[23,27,1223,1172]},"mobile":{"file":"gel-mobile.webp","size":[640,640],"bounds":[11,13,625,599]}},"honey":{"full":{"file":"honey.webp","size":[1254,1254],"bounds":[94,273,1069,756]},"mobile":{"file":"honey-mobile.webp","size":[640,640],"bounds":[48,139,546,386]}},"lemon":{"full":{"file":"lemon.webp","size":[1254,1254],"bounds":[224,205,854,851]},"mobile":{"file":"lemon-mobile.webp","size":[640,640],"bounds":[114,104,436,435]}},"maca":{"full":{"file":"maca.webp","size":[1254,1254],"bounds":[167,143,966,961]},"mobile":{"file":"maca-mobile.webp","size":[640,640],"bounds":[85,73,494,491]}},"ginseng":{"full":{"file":"ginseng.webp","size":[1254,1254],"bounds":[176,81,962,1103]},"mobile":{"file":"ginseng-mobile.webp","size":[640,640],"bounds":[90,41,491,564]}},"jar":{"full":{"file":"jar.webp","size":[1122,1402],"bounds":[205,337,710,785]},"mobile":{"file":"jar-mobile.webp","size":[640,800],"bounds":[116,192,406,449]}},"lid":{"full":{"file":"lid-wet.webp","size":[768,768],"bounds":[53,28,661,231]},"mobile":{"file":"lid-wet-mobile.webp","size":[640,640],"bounds":[44,23,551,193]}}};
+const variant=matchMedia("(max-width:768px)").matches?"mobile":"full";
+function image(name,x,y,w,h,rotation=0,mirror=false){const a=assets[name];if(!a)return;ctx.save();ctx.translate(x,y);ctx.rotate(rotation*Math.PI/180);if(mirror)ctx.scale(-1,1);ctx.drawImage(a.image,...a.bounds,-w/2,-h/2,w,h);ctx.restore()}
+function fit(name,width){const b=assetSpecs[name][variant].bounds;return width*b[3]/b[2]}
 function copy(el,opacity){el.style.opacity=opacity;el.setAttribute('aria-hidden',String(opacity<.01))}
 function draw(p,now){if(!ready)return;const reveal=ease(range(p,.23,.76)),lid=ease(range(p,.06,.43)),floatAmount=reduced.matches||!floating?0:smooth(range(p,.73,.84));bob=reduced.matches?0:bob+(floatAmount-bob)*.07;const clock=now/1000;
 ctx.clearRect(0,0,900,900);
@@ -75,19 +76,25 @@ copy(intro,reduced.matches?0:1-smooth(range(p,.10,.31)));copy(source,reduced.mat
   }
   const assetDeadline = setTimeout(fallback, 30000);
   let loaded=0;
-  Promise.all(['gel','honey','lemon','maca','ginseng','jar','lid'].map(async name=>{
+  async function load(name) {
+    const spec=assetSpecs[name][variant];
     const img=new Image(); img.decoding='async';
-    img.src='assets/hero-layered/'+(name==='lid'?'lid-wet.webp':name+'.png');
+    img.fetchPriority=['jar','lid'].includes(name)?'high':'low';
+    img.src='assets/hero-layered/'+spec.file;
     await img.decode();
-    assets[name]={image:img,bounds:bounds(img)};
+    assets[name]={image:img,bounds:spec.bounds};
     loading?.progress(++loaded,7);
-  })).then(()=>{
-    if (failed) return;
+    wake();
+  }
+  // The first swipe needs only the jar and lid. Ingredients never gate input.
+  Promise.all(['jar','lid'].map(load)).then(()=>{
     clearTimeout(assetDeadline);
+    if(failed) { failed=false; delete track.dataset.fallback; track.dataset.pending='true'; canvas.hidden=false; }
     ready=true; current=reduced.matches?1:target;
     draw(current,performance.now());
     art.dataset.frameReady='true'; canvas.dataset.ready='true';
     loading?.ready(); measure();
-  }).catch(fallback);
+  }).catch(()=>{clearTimeout(assetDeadline);fallback();});
+  ['gel','honey','lemon','maca','ginseng'].forEach(name=>load(name).catch(()=>{}));
   measure();
 })();
