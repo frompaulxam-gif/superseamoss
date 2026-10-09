@@ -14,6 +14,7 @@
   }
   const reduced = matchMedia('(prefers-reduced-motion:reduce)');
   const clamp=n=>Math.max(0,Math.min(1,n)),smooth=n=>{n=clamp(n);return n*n*(3-2*n)},ease=n=>1-(1-clamp(n))**3,range=(p,a,b)=>clamp((p-a)/(b-a)),mix=(a,b,t)=>a+(b-a)*t;
+  let backdropLocked=false;
   let assets={},ready=false,target=0,current=0,previous=performance.now(),floating=true,bob=0,visible=true,failed=false,request=0;
   // Composition and reveal curves are retained from the approved layered prototype.
 // Precomputed crop bounds avoid seven large pixel scans on mobile startup.
@@ -34,12 +35,13 @@ image('jar',450,jarY,390,fit('jar',390));
 const arc=Math.sin(lid*Math.PI);image('lid',mix(450,220,lid),mix(380,145,lid)-arc*24+Math.sin(clock*.8+2)*3*bob,mix(390,285,lid),fit('lid',mix(390,285,lid)),-18*lid+2*Math.sin(range(p,.06,.20)*Math.PI));
 const index=Math.round(clamp(p/.78)*80);canvas.dataset.frame=index;canvas.dataset.progress=p.toFixed(4);canvas.dataset.float=bob.toFixed(4);
 copy(intro,reduced.matches?0:1-smooth(range(p,.10,.31)));copy(source,reduced.matches?1:smooth(range(p,.79,.85)));copy(place,reduced.matches?1:smooth(range(p,.85,.90)));track.dataset.progress=p.toFixed(4);
+revealBackdrop();
 }
 
   function measure() {
     target=reduced.matches?1:track.dataset.pending==='true'?0:clamp(-track.getBoundingClientRect().top/Math.max(1,track.offsetHeight-stage.clientHeight));
     if (reduced.matches) { current=target; bob=0; }
-    wake();
+    revealBackdrop(); wake();
   }
   function tick(now) {
     request=0;
@@ -59,7 +61,7 @@ copy(intro,reduced.matches?0:1-smooth(range(p,.10,.31)));copy(source,reduced.mat
   }
   function fallback() {
     if (failed) return;
-    failed=true; track.dataset.fallback='true';
+    failed=true; track.dataset.fallback='true'; track.dataset.artworkState='fallback';
     canvas.hidden=true;
     // Keep the already requested poster if an asset fails; never block the page.
     delete track.dataset.pending;
@@ -82,15 +84,19 @@ copy(intro,reduced.matches?0:1-smooth(range(p,.10,.31)));copy(source,reduced.mat
   if ('IntersectionObserver' in window) {
     new IntersectionObserver(entries=>{visible=entries[0].isIntersecting;wake();}).observe(track);
   }
-  const assetDeadline = setTimeout(()=>{if(!ready)fallback();}, 30000);
+  track.dataset.artworkState='loading';
+  // Wait for a complete decoded composition; keep the static jar usable meanwhile.
+  const assetDeadline = setTimeout(()=>{if(!ready)fallback();}, 6500);
   const attempts={}, pending=new Set(), retries=new Map();
   const retryDelays=[1000,3000,8000];
   let loaded=0;
   function enable() {
-    if(ready || !assets.jar || !assets.lid) return;
+    if(ready || Object.keys(assetSpecs).some(name=>!assets[name])) return;
     clearTimeout(assetDeadline);
     if(failed) { failed=false; delete track.dataset.fallback; track.dataset.pending='true'; canvas.hidden=false; }
-    ready=true; current=reduced.matches?1:target;
+    backdropLocked=!!backdrop&&(!backdrop.complete||!backdrop.naturalWidth);
+    track.dataset.backdropState=backdropLocked?'fallback':'image';
+    ready=true; track.dataset.artworkState='complete'; current=reduced.matches?1:track.dataset.pending==='true'?0:target;
     draw(current,performance.now());
     art.dataset.frameReady='true'; canvas.dataset.ready='true';
     loading?.ready(); measure();
@@ -99,7 +105,7 @@ copy(intro,reduced.matches?0:1-smooth(range(p,.10,.31)));copy(source,reduced.mat
     if(assets[name] || pending.has(name)) return;
     pending.add(name);
     const spec=assetSpecs[name][variant], essential=name==='jar'||name==='lid';
-    const img=new Image(); img.decoding='async'; img.fetchPriority=essential?'high':'low';
+    const img=new Image(); img.decoding='async'; img.fetchPriority='high';
     // The mobile jar is embedded in the document, so a lost image request
     // cannot remove both the animation and its static fallback.
     const embedded=essential&&variant==='mobile' ? art.querySelector('[data-hero-asset="'+name+'"]')?.getAttribute('href') : null;
@@ -126,7 +132,16 @@ copy(intro,reduced.matches?0:1-smooth(range(p,.10,.31)));copy(source,reduced.mat
   addEventListener('online',recover,{passive:true});
   // Also recover the decorative backdrop without gating the usable page.
   const backdrop=track.querySelector('.seamoss-hero-backdrop img');
+  function revealBackdrop() {
+    if(!backdrop || !backdrop.complete || !backdrop.naturalWidth)return;
+    // Keep the chosen gradient throughout a reveal; only swap when complete or offscreen.
+    if(backdropLocked && current<.999 && track.getBoundingClientRect().top>-track.offsetHeight)return;
+    backdropLocked=false;backdrop.style.opacity='1';track.dataset.backdropState='image';
+  }
   if(backdrop) {
+    // Fade a late background in without replacing the stable gradient abruptly.
+    if(!backdrop.complete || !backdrop.naturalWidth)backdrop.style.opacity='0';
+    backdrop.addEventListener('load',revealBackdrop);
     let tries=0,timer,inFlight=false;
     const retryBackdrop=()=>{
       if(inFlight || backdrop.complete&&backdrop.naturalWidth)return;
