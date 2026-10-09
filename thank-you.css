@@ -1,1 +1,19 @@
 .thank-you-page{background:#e1e3dc}.thanks-content{width:min(1160px,90%);margin:0 auto;padding:180px 0 80px;display:grid;grid-template-columns:1.1fr 1fr;gap:clamp(36px,7vw,100px)}.thanks-note h1{font-size:clamp(44px,6vw,82px);font-weight:550;line-height:1.02;letter-spacing:-.045em;margin:24px 0 28px}.thanks-note p{font-size:18px;line-height:1.7;max-width:45ch}.thanks-note .thanks-intro{font-size:23px;line-height:1.5;margin-bottom:20px}.thanks-signoff{margin-top:30px}.thanks-next{background:var(--paper);border-radius:22px;padding:36px}.thanks-next h2{font-size:28px;letter-spacing:-.03em;font-weight:550}.thanks-next ol{padding:0;list-style:none;counter-reset:steps;margin:26px 0 30px}.thanks-next li{counter-increment:steps;position:relative;padding:22px 0 22px 40px;border-top:1px solid var(--line)}.thanks-next li::before{content:"0" counter(steps);position:absolute;left:0;top:26px;font-size:12px;color:var(--muted)}.thanks-next h3{font-size:18px;line-height:1.4;margin-bottom:10px;font-weight:600}.thanks-next p{font-size:15px;line-height:1.7;color:#4b5446}.thanks-next .button{width:100%;white-space:normal;text-align:center}.thanks-home{display:block;text-align:center;text-decoration:underline;text-underline-offset:4px;padding:18px 4px 0;min-height:44px;font-size:14px}.thanks-footer{width:90%;margin:auto;padding:28px 0;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:24px;font-size:11px;letter-spacing:.5px;line-height:1.7}.thanks-footer a{text-decoration:underline;text-underline-offset:4px;min-height:44px}@media(max-width:800px){.thanks-content{grid-template-columns:1fr;padding-top:130px;gap:36px;padding-bottom:44px}.thanks-note h1{font-size:clamp(42px,9vw,66px)}.thanks-note .thanks-intro{font-size:21px}.thanks-note p{font-size:16px}.thanks-next{padding:26px 22px}.thanks-footer{flex-direction:column;gap:10px}}@media print{.site-header,.skip-link,.thanks-next,.thanks-footer{display:none}.thanks-content{display:block;padding:30px;width:100%}.thanks-note{max-width:550px;margin:auto}.thank-you-page{background:#fff}}
+
+/* A short welcome, followed by the useful details. No asset or JS dependency. */
+.thanks-arrival{display:none}
+@media screen and (prefers-reduced-motion:no-preference){
+  .thanks-arrival[hidden]{display:grid;position:fixed;inset:0;z-index:100;background:#e1e3dc;place-items:center;padding:32px 6%;pointer-events:none;animation:thanks-curtain 2.6s linear both}
+  .thanks-arrival-copy{text-align:center;max-width:960px;animation:thanks-welcome .7s cubic-bezier(.23,1,.32,1) both}
+  .thanks-arrival-title{font-size:clamp(48px,9vw,116px);font-weight:600;line-height:1.02;letter-spacing:-.055em;margin:26px 0}
+  .thanks-arrival-caption{font-size:clamp(17px,2vw,23px);line-height:1.5}
+  .thank-you-page .thanks-content,.thank-you-page .thanks-footer{animation:thanks-information .65s 1.85s cubic-bezier(.23,1,.32,1) both}
+  .thank-you-page.arrival-interactive .thanks-arrival{pointer-events:auto}
+  .thank-you-page.arrival-dismissed .thanks-arrival,.thank-you-page:focus-within .thanks-arrival{display:none}
+  .thank-you-page.arrival-dismissed .thanks-content,.thank-you-page.arrival-dismissed .thanks-footer,.thank-you-page:focus-within .thanks-content,.thank-you-page:focus-within .thanks-footer{animation:none}
+}
+@keyframes thanks-welcome{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes thanks-curtain{0%,70%{opacity:1;visibility:visible}100%{opacity:0;visibility:hidden;pointer-events:none}}
+@keyframes thanks-information{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@media screen and (max-height:480px){.thanks-arrival-title{font-size:clamp(38px,10vh,60px);margin:16px 0}}
+@media print{.thanks-arrival[hidden]{display:none!important}.thanks-content,.thanks-footer{animation:none!important}}
