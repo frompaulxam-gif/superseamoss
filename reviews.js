@@ -9,11 +9,15 @@
   clone.querySelectorAll('a, button').forEach(link => { link.tabIndex = -1; });
   track.append(clone);
   const dialog = document.querySelector('.review-dialog');
-  if (dialog) {
+  if (dialog && typeof dialog.showModal === 'function') {
     section.addEventListener('click', event => {
       const button = event.target.closest('[data-review-full]');
       const content = button?.closest('.review-card')?.querySelector('.review-full-text');
       if (!content) return;
+      event.preventDefault();
+      const stars = button.closest('.review-card').querySelector('.review-stars');
+      dialog.querySelector('.review-stars')?.remove();
+      if (stars) dialog.querySelector('#review-dialog-title').before(stars.cloneNode(true));
       dialog.querySelector('#review-dialog-title').textContent = button.closest('.review-card').querySelector('.review-byline').textContent.trim();
       dialog.querySelector('.review-dialog-text').replaceChildren(content.content.cloneNode(true));
       section.dataset.reviewOpen = 'true';

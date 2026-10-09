@@ -31,3 +31,7 @@ body.review-open{overflow:hidden}
 .review-dialog-text p{font-size:16px;line-height:1.7;margin:0 0 20px;color:var(--muted)}
 .review-dialog-text p:last-child{margin-bottom:0}
 @media(max-width:700px){.review-dialog{padding:64px 24px 28px}.review-dialog-text p{font-size:15px}}
+
+.reviews-all{display:flex;justify-content:center;padding:8px 5% 0}
+.site-header nav a[aria-current="page"]{border-bottom-color:var(--ink)}
+@media(min-width:1001px) and (max-width:1180px){.header-order{display:none}}
