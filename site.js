@@ -95,13 +95,17 @@
   }
 ];
   const body = document.body;
+  const productDialog = document.querySelector('.product-dialog');
+  // Support a cached copy of the old header during the navigation rollout.
   const menuButton = document.querySelector('.menu-button');
   const navigation = document.querySelector('#main-navigation');
-  const productDialog = document.querySelector('.product-dialog');
-  const closeMenu=()=> { navigation.classList.remove('open');menuButton.setAttribute('aria-expanded','false');menuButton.setAttribute('aria-label','Open navigation'); };
-  menuButton.addEventListener('click',()=> { const open=navigation.classList.toggle('open');menuButton.setAttribute('aria-expanded',String(open));menuButton.setAttribute('aria-label',open?'Close navigation':'Open navigation'); });
-  navigation.querySelectorAll('a').forEach(link=>link.addEventListener('click',closeMenu));
-  document.addEventListener('keydown',event=> { if(event.key==='Escape'&&navigation.classList.contains('open')){closeMenu();menuButton.focus();} });
+  if (menuButton && navigation) {
+    const closeMenu = () => { navigation.classList.remove('open'); menuButton.setAttribute('aria-expanded','false'); menuButton.setAttribute('aria-label','Open navigation'); };
+    menuButton.addEventListener('click',() => { const open=navigation.classList.toggle('open'); menuButton.setAttribute('aria-expanded',String(open)); menuButton.setAttribute('aria-label',open?'Close navigation':'Open navigation'); });
+    navigation.querySelectorAll('a').forEach(link => link.addEventListener('click',closeMenu));
+    document.addEventListener('keydown',event => { if(event.key==='Escape' && navigation.classList.contains('open')) { closeMenu(); menuButton.focus(); } });
+  }
+
   document.querySelectorAll('[data-product]').forEach(button=>button.addEventListener('click',()=> {
     const product=products.find(item=>item.id===button.dataset.product);
     const image=document.querySelector('#product-dialog-image');const version='?v=wet1';image.src='assets/blends/'+product.id+'-wet.webp'+version;image.srcset='assets/blends/'+product.id+'-wet-768.webp'+version+' 768w, assets/blends/'+product.id+'-wet.webp'+version+' 1536w';image.sizes='(max-width: 700px) calc(100vw - 24px), 46vw';image.alt='Creative ingredient still life for Super Seamoss '+product.name;

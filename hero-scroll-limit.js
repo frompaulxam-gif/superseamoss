@@ -55,7 +55,8 @@
       track.querySelector('canvas')?.dataset.ready === 'true' &&
       track.dataset.fallback !== 'true' &&
       !document.documentElement.classList.contains('page-loading') &&
-      !document.body.classList.contains('dialog-open');
+      !document.body.classList.contains('dialog-open') &&
+      !document.querySelector('.site-menu[open]');
   }
   function stop() {
     cancelAnimationFrame(frame);
@@ -230,6 +231,7 @@
     if (!nearHero()) remember(0);
     if (track.dataset.pending === 'true' && !earlySwipe) activateReadyHero();
   }, { passive: true });
+  document.addEventListener('seamoss:navigation',()=>{cancelIdle();reset();});
   document.addEventListener('seamoss:hero-ready', ()=>{activateReadyHero();playIdle();});
   document.addEventListener('seamoss:ready', ()=>{activateReadyHero();armIdle();playIdle();});
   addEventListener('resize', () => {

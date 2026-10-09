@@ -29,13 +29,15 @@ setTimeout(() => {
   document.dispatchEvent(new Event('seamoss:load-timeout'));
 }, 3000);
 </script>
-<script src="loading.js?v=idle-reveal1" fetchpriority="high" defer></script><script src="site.js?v=buy-now1" defer></script><script src="jar-scroll.js?v=elapsed-float1" fetchpriority="high" defer></script><script src="hero-scroll-limit.js?v=native-handoff1" fetchpriority="high" defer></script><script type="module" src="order-options.js?v=ingredient-capitals1"></script>
+<script src="loading.js?v=idle-reveal1" fetchpriority="high" defer></script><script src="site.js?v=fullscreen-navigation1" defer></script><script src="jar-scroll.js?v=elapsed-float1" fetchpriority="high" defer></script><script src="hero-scroll-limit.js?v=navigation1" fetchpriority="high" defer></script><script type="module" src="order-options.js?v=ingredient-capitals1"></script>
 <link rel="stylesheet" href="blend-preview.css?v=ingredient-guide1">
 <link rel="stylesheet" href="blend-picker.css?v=manuka-recipes1">
 <link rel="stylesheet" href="reviews.css?v=reviews-page1">
 <script src="reviews.js?v=reviews-page1" defer></script>
 <link rel="stylesheet" href="analytics.css?v=1">
 <script src="analytics.js?v=1" defer></script>
+<link rel="stylesheet" href="/navigation.css?v=1">
+<script src="/navigation.js?v=1" defer></script>
 </head>
 <body>
 <!-- Client gel colour corrections preserve neutral lid pixels, highlights and black logos. -->
@@ -47,9 +49,21 @@ setTimeout(() => {
 <a class="skip-link" href="#collection">Skip to content</a>
 <header class="site-header">
 <a class="brand" href="#top" aria-label="Super Seamoss home"><img src="assets/logo-mark.webp" alt="Super Seamoss original logo" width="65" height="65"><span>Super <span class="brand-word">Seamoss</span><small>SEAMOSS GEL. DAILY NOURISHMENT.</small></span></a>
-<nav id="main-navigation" aria-label="Main navigation"><a href="#collection">Our 15 blends</a><a href="#order-options">Mix &amp; match</a><a href="#ritual">How to order</a><a href="/reviews/">Reviews</a><a href="mailto:info@superseamoss.co.uk">Contact us</a><a class="mobile-order" href="https://www.instagram.com/super.seamoss/" target="_blank" rel="noopener">Enquire on Instagram <span aria-hidden="true">+</span></a></nav>
-<a class="button button-dark header-order" href="#collection">Explore blends <span aria-hidden="true">+</span></a>
-<button class="menu-button" aria-controls="main-navigation" aria-label="Open navigation" aria-expanded="false">Menu <span aria-hidden="true">+</span></button>
+<details class="site-menu">
+<summary class="menu-toggle" aria-label="Navigation" aria-controls="main-navigation"><span class="menu-icon" aria-hidden="true"><span></span><span></span><span></span></span></summary>
+<div class="menu-panel">
+<nav id="main-navigation" class="menu-navigation" aria-label="Main navigation">
+<div class="menu-links"><a href="#top">Home</a>
+<a href="#collection">Our 15 blends</a>
+<a href="#order-options">Mix &amp; match</a>
+<a href="#ritual">How to order</a>
+<a href="/reviews/">Reviews</a>
+<a href="#questions">FAQs</a>
+<a href="#contact">Contact us</a></div>
+<div class="menu-contact"><a class="button button-dark" href="#collection">Explore blends <span aria-hidden="true">+</span></a><a class="menu-email" href="mailto:info@superseamoss.co.uk">info@superseamoss.co.uk</a><a class="menu-social" href="https://www.instagram.com/super.seamoss/" target="_blank" rel="noopener">Instagram</a></div>
+</nav>
+</div>
+</details>
 </header>
 <main>
 <div class="seamoss-hero-track" id="top" data-pending="true">

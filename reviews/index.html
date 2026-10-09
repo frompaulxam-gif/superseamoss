@@ -24,17 +24,31 @@
 <link rel="stylesheet" href="/reviews.css?v=reviews-page1">
 <link rel="stylesheet" href="/reviews-page.css?v=1">
 <link rel="stylesheet" href="/analytics.css?v=1">
-<script src="/reviews-page.js?v=1" defer></script>
+
 <script src="/analytics.js?v=1" defer></script>
-<noscript><style>@media(max-width:1000px){.reviews-page .menu-button{display:none}.reviews-page .site-header{position:static;flex-wrap:wrap;height:auto}.reviews-page .site-header nav{display:flex;position:static;flex-wrap:wrap;border:0;box-shadow:none;padding:0;gap:4px 20px}.reviews-page .site-header nav .mobile-order{display:none}.reviews-content{padding-top:40px}}</style></noscript>
+
+<link rel="stylesheet" href="/navigation.css?v=1">
+<script src="/navigation.js?v=1" defer></script>
 </head>
 <body class="reviews-page" id="top">
 <a class="skip-link" href="#main-content">Skip to reviews</a>
 <header class="site-header">
 <a class="brand" href="/" aria-label="Super Seamoss home"><img src="/assets/logo-mark.webp" alt="Super Seamoss original logo" width="65" height="65"><span>Super <span class="brand-word">Seamoss</span><small>SEAMOSS GEL. DAILY NOURISHMENT.</small></span></a>
-<nav id="main-navigation" aria-label="Main navigation"><a href="/#collection">Our 15 blends</a><a href="/#order-options">Mix &amp; match</a><a href="/#ritual">How to order</a><a href="/reviews/" aria-current="page">Reviews</a><a href="mailto:info@superseamoss.co.uk">Contact us</a><a class="mobile-order" href="https://www.instagram.com/super.seamoss/" target="_blank" rel="noopener">Enquire on Instagram <span aria-hidden="true">+</span></a></nav>
-<a class="button button-dark header-order" href="/#collection">Explore blends <span aria-hidden="true">+</span></a>
-<button class="menu-button" aria-controls="main-navigation" aria-label="Open navigation" aria-expanded="false">Menu <span aria-hidden="true">+</span></button>
+<details class="site-menu">
+<summary class="menu-toggle" aria-label="Navigation" aria-controls="main-navigation"><span class="menu-icon" aria-hidden="true"><span></span><span></span><span></span></span></summary>
+<div class="menu-panel">
+<nav id="main-navigation" class="menu-navigation" aria-label="Main navigation">
+<div class="menu-links"><a href="/">Home</a>
+<a href="/#collection">Our 15 blends</a>
+<a href="/#order-options">Mix &amp; match</a>
+<a href="/#ritual">How to order</a>
+<a href="/reviews/" aria-current="page">Reviews</a>
+<a href="/#questions">FAQs</a>
+<a href="/#contact">Contact us</a></div>
+<div class="menu-contact"><a class="button button-dark" href="/#collection">Explore blends <span aria-hidden="true">+</span></a><a class="menu-email" href="mailto:info@superseamoss.co.uk">info@superseamoss.co.uk</a><a class="menu-social" href="https://www.instagram.com/super.seamoss/" target="_blank" rel="noopener">Instagram</a></div>
+</nav>
+</div>
+</details>
 </header>
 <main id="main-content" class="reviews-content">
 <div class="reviews-page-heading"><h1>Customer reviews</h1><p>In our customers’ words.</p></div>
