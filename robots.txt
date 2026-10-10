@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://superseamoss.co.uk/sitemap.xml
