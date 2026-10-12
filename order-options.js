@@ -1,4 +1,4 @@
-import { createSquareCheckout } from './square-checkout.mjs?v=taster1';
+import { createSquareCheckout } from './square-checkout.mjs?v=taster-sold-out1';
 import { copyText, manualCopyHint } from './copy-text.mjs?v=1';
 import { offers, priceOrder, money } from './order-pricing.mjs?v=taster1';
 import { createBlendPreview } from './blend-preview.js?v=ingredient-capitals1';
@@ -23,6 +23,10 @@ if (form) {
 
   const renderCheckout = createSquareCheckout(form);
   const render = () => {
+    // A browser may restore an old taster selection after stock changes.
+    if (form.querySelector('[name="jar-size"][value="141ml"]').checked) {
+      form.querySelector('[name="jar-size"][value="330ml"]').checked = true;
+    }
     const data = new FormData(form);
     const size = data.get('jar-size');
     const taster = size === '141ml';
@@ -33,7 +37,7 @@ if (form) {
     const subscription = !taster && data.get('purchase-type') === 'subscription';
     const blendIds = selects.map(select => select.value);
     Object.keys(offers).forEach(jarSize => {
-      setText('[data-size-start="' + jarSize + '"]', jarSize === '141ml' ? '3 jars · £36' : 'From ' + money(priceOrder(jarSize, 1, subscription, 'shipping', blendIds).jarSubtotal));
+      setText('[data-size-start="' + jarSize + '"]', jarSize === '141ml' ? 'Sold out · awaiting restock' : 'From ' + money(priceOrder(jarSize, 1, subscription, 'shipping', blendIds).jarSubtotal));
     });
     const maxQuantity = offers[size].length - 1;
     let quantity = Number(data.get('jar-count'));
@@ -109,6 +113,7 @@ if (form) {
   createBlendPickers(form, selects);
   document.querySelector('[data-order-taster]').addEventListener('click', () => {
     const input = form.querySelector('[name="jar-size"][value="141ml"]');
+    if (input.disabled) return;
     input.checked = true;
     input.dispatchEvent(new Event('change', { bubbles: true }));
     input.focus({ preventScroll: true });

@@ -384,3 +384,5 @@ html{scroll-padding-top:112px}
 .blend-buy:active,#product-dialog-buy:active{transform:scale(.98)}
 #product-dialog-buy{margin:8px 0 0}
 @media(max-width:380px){.blend-actions{gap:8px 16px}.blend-actions .blend-buy{padding:12px 18px}}
+
+.taster-promo .button:disabled{opacity:.65;cursor:not-allowed;transform:none}
