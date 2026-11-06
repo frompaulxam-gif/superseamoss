@@ -120,6 +120,20 @@ if (form) {
   });
   // Delegation also handles the repeated reviews created by the scrolling strip.
   document.addEventListener('click', event => {
+    const bundle = event.target.closest('[data-order-bundle]');
+    if (bundle) {
+      const count = Number(bundle.dataset.orderBundle);
+      const ids = (bundle.dataset.orderBlends || '').split(',');
+      const validIds = new Set([...selects[0].options].map(option => option.value));
+      if (![1, 2, 3, 4].includes(count) || ids.length !== count || ids.some(id => !validIds.has(id))) return;
+      form.querySelector('[name="jar-size"][value="330ml"]').checked = true;
+      form.querySelector('[name="jar-count"][value="' + count + '"]').checked = true;
+      // Finder suggestions are one-off until the customer explicitly selects recurring billing.
+      form.querySelector('[name="purchase-type"][value="one-off"]').checked = true;
+      ids.forEach((id, index) => { selects[index].value = id; selects[index].dataset.recipe = 'original'; });
+      form.dispatchEvent(new Event('change', { bubbles: true }));
+      return;
+    }
     const link = event.target.closest('[data-order-blend]');
     if (!link) return;
     selects[0].value = link.dataset.orderBlend;
