@@ -16,6 +16,7 @@ if (form) {
   const steps = [...form.querySelectorAll('[data-finder-step]')];
   const result = root.querySelector('[data-finder-result]');
   const progress = root.querySelector('[data-finder-progress]');
+  const ageStop = root.querySelector('[data-finder-age-stop]');
   const error = root.querySelector('[data-finder-error]');
   const back = root.querySelector('[data-finder-back]');
   const next = root.querySelector('[data-finder-next]');
@@ -24,11 +25,12 @@ if (form) {
   function showStep(index, focus = true) {
     step = index;
     result.hidden = true;
+    ageStop.hidden = true;
     form.hidden = false;
     steps.forEach((panel, i) => { panel.hidden = i !== index; });
     back.hidden = index === 0;
     next.textContent = index === steps.length - 1 ? 'See my suggestions' : 'Continue';
-    progress.textContent = `Step ${index + 1} of 3`;
+    progress.textContent = `Step ${index + 1} of ${steps.length}`;
     error.textContent = '';
     if (focus) steps[index].querySelector('h3').focus();
   }
@@ -71,6 +73,7 @@ if (form) {
     result.querySelector('[data-finder-offer]').textContent = `${quantity} × 330ml ${quantity === 1 ? 'jar' : 'jars'} · ${money(quote.total)} total`;
     result.querySelector('[data-finder-delivery]').textContent = `One-off order. Jars ${money(quote.jarSubtotal)} + ${quote.delivery ? money(quote.delivery) + ' chilled UK mainland delivery' : 'free chilled UK mainland delivery'}. You can change your choices before paying.`;
     const buy = result.querySelector('[data-order-bundle]');
+    buy.href = '#order-choices';
     buy.dataset.orderBundle = String(quantity);
     buy.dataset.orderBlends = chosen.join(',');
     buy.textContent = quantity === 1 ? 'Choose this jar' : `Build my ${quantity}-jar bundle`;
@@ -98,6 +101,20 @@ if (form) {
   }
   form.addEventListener('submit', event => {
     event.preventDefault();
+    if (step === 0 && value('finder-age') === 'under18') {
+      // Stop before health questions or product matching. Clear earlier adult results.
+      result.querySelector('[data-finder-cards]').replaceChildren();
+      const buy = result.querySelector('[data-order-bundle]');
+      buy.removeAttribute('data-order-blends');
+      buy.removeAttribute('href');
+      buy.textContent = '';
+      result.hidden = true;
+      form.hidden = true;
+      ageStop.hidden = false;
+      progress.textContent = 'Before you continue';
+      ageStop.querySelector('h3').focus();
+      return;
+    }
     const missing = [...steps[step].querySelectorAll('fieldset')].find(fieldset => !fieldset.querySelector('input:checked'));
     if (missing) {
       error.textContent = 'Choose an option for each question to continue.';
@@ -111,6 +128,7 @@ if (form) {
     error.textContent = '';
     root.querySelector('[data-finder-libido]').hidden = value('finder-interest') !== 'libido';
   });
+  root.querySelector('[data-finder-age-change]').addEventListener('click', () => showStep(0));
   back.addEventListener('click', () => showStep(step - 1));
   result.querySelector('[data-finder-change]').addEventListener('click', () => showStep(0));
   result.querySelector('[data-finder-restart]').addEventListener('click', () => {
