@@ -1,4 +1,4 @@
-import { createSquareCheckout } from './square-checkout.mjs?v=taster-sold-out1';
+import { createSquareCheckout } from './square-checkout.mjs?v=welcome1';
 import { copyText, manualCopyHint } from './copy-text.mjs?v=1';
 import { offers, priceOrder, money } from './order-pricing.mjs?v=taster1';
 import { createBlendPreview } from './blend-preview.js?v=ingredient-capitals1';
@@ -86,9 +86,9 @@ if (form) {
     subscriptionSaving.textContent = 'Subscription saving (10%): ' + money(quote.subscriptionSaving);
     setText('#order-delivery-price', quote.delivery ? money(quote.delivery) : 'Free');
     setText('#order-delivery-label', 'Chilled UK mainland delivery');
-    setText('#order-total-label', subscription ? 'Monthly total' : 'Order total');
+    setText('#order-total-label', subscription ? 'Monthly total' : 'Total before vouchers');
     setText('#order-total-price', money(quote.total));
-    setText('#order-shipping-note', subscription ? 'Free chilled UK mainland delivery on every monthly subscription, with no minimum spend.' : quote.delivery ? 'Free chilled delivery when your jar subtotal reaches £50.' : 'Your jar subtotal qualifies for free chilled delivery.');
+    setText('#order-shipping-note', subscription ? 'Free chilled UK mainland delivery on every monthly subscription, with no minimum spend.' : quote.delivery ? 'Free chilled delivery when your jar subtotal after discounts reaches £50.' : 'Free chilled delivery applies while your jar subtotal after voucher discounts stays at £50 or more.');
     document.querySelector('#order-schedule').hidden = !subscription;
     const duplicateTaster = taster && new Set(blendIds.slice(0, 3)).size !== 3;
     const tasterNote = document.querySelector('#order-taster-note');

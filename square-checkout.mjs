@@ -204,9 +204,9 @@ export function createSquareCheckout(form) {
     note.textContent = size === '141ml'
       ? 'Copy your three blend choices below, then click Continue to Square. Keep the quantity at 1 for one taster trio: 3 × 141ml jars. Paste your choices into the required field. Your total including chilled delivery is ' + money(checkout.total) + '.'
       : oceanSingle
-      ? 'Copy your blend choice below, then click Continue to Square. Keep the quantity at 1. Click Checkout and paste your blend into the required field. Your expected total including chilled delivery is ' + money(checkout.total) + '.'
+      ? 'Copy your blend choice below, then click Continue to Square. Keep the quantity at 1. Click Checkout and paste your blend into the required field. Your total before voucher discounts, including chilled delivery, is ' + money(checkout.total) + '.'
       : subscription
       ? 'Copy your blend choices below, then click Continue to Square for your monthly checkout. Paste your blends and enter your full UK mainland delivery name, address and postcode in the required fields. Your total is ' + money(checkout.total) + ' each month, including free delivery. Cancel anytime.'
-      : 'Copy your blend choices below, then click Continue to Square. Select One-time purchase. Keep the bundle quantity at 1. Click Checkout and paste your blends into the required field. Your expected total including chilled delivery is ' + money(checkout.total) + '. For a monthly subscription with free delivery, select Subscribe & Save on this website first.';
+      : 'Copy your blend choices below, then click Continue to Square. Select One-time purchase. Keep the bundle quantity at 1. Click Checkout and paste your blends into the required field. Your total before voucher discounts, including chilled delivery, is ' + money(checkout.total) + '. For a monthly subscription with free delivery, select Subscribe & Save on this website first.';
   };
 }
