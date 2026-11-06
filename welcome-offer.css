@@ -16,3 +16,5 @@
 .welcome-reward{min-height:91px}.welcome-reward p{font-size:14px;line-height:1.5;margin:0}.welcome-reward strong{display:block;font-size:30px;line-height:1.4;letter-spacing:.06em}.welcome-shop-link{display:inline-block;min-height:44px;padding:12px;text-decoration:underline;text-underline-offset:4px}
 @media(max-width:650px){.welcome-offer{grid-template-columns:1fr;gap:30px;padding-top:48px;padding-bottom:48px}.welcome-wheel{max-width:240px}.welcome-offer-copy h2{max-width:15ch}}
 @media(prefers-reduced-motion:reduce){.welcome-offer button:active{transform:none}}
+
+.welcome-signup{border-top:1px solid var(--line);padding-top:20px;margin-top:24px;max-width:42ch}.welcome-signup h3{font-size:22px;line-height:1.2;margin:0 0 10px;font-weight:600;letter-spacing:-.02em}.welcome-signup p{font-size:15px;line-height:1.6;margin:0 0 8px}.welcome-signup-link{display:inline-block;min-height:44px;padding:10px 0;text-decoration:underline;text-underline-offset:4px;line-height:1.5}.welcome-signup-external{font-size:12px}.welcome-signup .welcome-signup-note{font-size:12px;color:#4f584b;margin-top:8px}.welcome-signup-link:focus-visible{outline:3px solid #5b654d;outline-offset:4px}
